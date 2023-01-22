@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navigation_guideline_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navigation_guideline_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navigation_guideline_3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75"/>
+
+    <ImageButton
+        android:id="@+id/button_like"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navigation_guideline_1"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_baseline_thumb_up_24"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+    <ImageButton
+        android:id="@+id/button_comments"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/navigation_guideline_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navigation_guideline_2"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_baseline_insert_comment_24"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+    <ImageButton
+        android:id="@+id/button_reactions"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/navigation_guideline_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navigation_guideline_3"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_baseline_add_reaction_24"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+    <ImageButton
+        android:id="@+id/button_report"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/navigation_guideline_3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_baseline_flag_24"
+        android:tint="@color/tint_1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

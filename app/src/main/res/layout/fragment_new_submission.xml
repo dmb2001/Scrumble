@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/label_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Title:"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/input_title"
+            android:hint="Enter your title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="28dp"
+            android:inputType="textMultiLine"
+            android:maxLines="2"
+            android:maxLength="500"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_title"/>
+
+        <TextView
+            android:id="@+id/label_image_select"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_title"
+            android:text="Select Images:"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingBottom="12dp"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_1"
+            android:layout_width="81dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_image_select"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_1_selected_indicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/selectable_image_1"
+            app:layout_constraintBottom_toBottomOf="@id/selectable_image_1"
+            app:layout_constraintStart_toStartOf="@id/selectable_image_1"
+            app:layout_constraintEnd_toEndOf="@id/selectable_image_1"
+            android:background="@color/overlay_medium"
+            android:src="@drawable/ic_baseline_check_24"
+            android:tint="@android:color/white"
+            android:padding="20dp"
+            android:alpha="0.0"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_2"
+            android:layout_width="81dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toEndOf="@id/selectable_image_1"
+            app:layout_constraintTop_toBottomOf="@id/label_image_select"
+            android:layout_marginLeft="12dp"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_2_selected_indicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/selectable_image_2"
+            app:layout_constraintBottom_toBottomOf="@id/selectable_image_2"
+            app:layout_constraintStart_toStartOf="@id/selectable_image_2"
+            app:layout_constraintEnd_toEndOf="@id/selectable_image_2"
+            android:background="@color/overlay_medium"
+            android:src="@drawable/ic_baseline_check_24"
+            android:tint="@android:color/white"
+            android:padding="20dp"
+            android:alpha="0.0"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_3"
+            android:layout_width="81dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toEndOf="@id/selectable_image_2"
+            app:layout_constraintTop_toBottomOf="@id/label_image_select"
+            android:layout_marginLeft="12dp"/>
+
+        <ImageView
+            android:id="@+id/selectable_image_3_selected_indicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/selectable_image_3"
+            app:layout_constraintBottom_toBottomOf="@id/selectable_image_3"
+            app:layout_constraintStart_toStartOf="@id/selectable_image_3"
+            app:layout_constraintEnd_toEndOf="@id/selectable_image_3"
+            android:background="@color/overlay_medium"
+            android:src="@drawable/ic_baseline_check_24"
+            android:tint="@android:color/white"
+            android:padding="20dp"
+            android:alpha="0.0"/>
+
+        <TextView
+            android:id="@+id/label_tags"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Tags:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selectable_image_1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <ImageButton
+            android:id="@+id/button_add_tag"
+            android:layout_width="32dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/label_tags"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_plus"
+            android:scaleType="centerInside"
+            android:padding="5dp"
+            android:background="@color/dark_outline"
+            />
+
+        <TextView
+            android:id="@+id/tag_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_add_tag"
+            android:paddingTop="12dp"
+            android:lineSpacingExtra="6dp"
+            />
+
+        <TextView
+            android:id="@+id/label_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Description:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tag_list"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <EditText
+            android:id="@+id/input_description"
+            android:hint="Enter your description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:maxLines="10"
+            android:maxLength="1000"
+            android:gravity="top|start"
+            app:layout_constraintTop_toBottomOf="@id/label_description"/>
+
+        <TextView
+            android:id="@+id/submission_notice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_description"
+            android:layout_marginTop="12dp"
+            android:textSize="14sp"
+            android:text="By submitting a scrapbook, you agree to adhere to Scrumble's terms of service agreement"/>
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/submission_notice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="submit"
+            android:layout_marginTop="12dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

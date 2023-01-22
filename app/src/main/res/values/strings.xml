@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Scrumble</string>
+    <string name="reply">reply</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="comment_1">This is such an interesting scrapbook</string>
+    <string name="comment_2">Wow. I could not agree more! Definitely going to follow this user after seeing this!</string>
+    <string name="comment_3">Makes me want to visit</string>
+    <string name="comment_4">+1</string>
+    <string name="comment_5">This reminds me of my travels back in the day. Nostalgia!</string>
+    <string name="comment_6">I was thinking the same thing. Need to save up so I can visit here again</string>
+    <string name="comment_7">You should definitely keep posting, these are amazing. Do you know when your next trip will be and where you\'ll be going next?</string>
+    <string name="comment_8">I grew up here!</string>
+    <string name="comment_9">I heard that this place was beautiful but I didn\'t believe it until now...</string>
+    <string name="group_activity">Recent activity from groups</string>
+</resources>

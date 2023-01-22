@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="12dp"
+    android:clipToPadding="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_vertical_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_vertical_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85"/>
+
+        <ImageView
+            android:id="@+id/profile_picture_blank"
+            android:layout_width="82dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            android:src="@drawable/ic_blank_profile_pic_grey_background"
+            android:layout_marginTop="48dp"/>
+
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/profile_picture_blank"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:hint="email address"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            />
+
+        <EditText
+            android:id="@+id/input_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/input_email"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:hint="name"
+            android:gravity="center"
+            android:inputType="text"
+            android:maxLines="1"
+            />
+
+        <EditText
+            android:id="@+id/input_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/input_name"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:hint="username"
+            android:gravity="center"
+            android:inputType="text"
+            android:maxLines="1"
+            />
+
+        <EditText
+            android:id="@+id/input_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/input_username"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:hint="password"
+            android:gravity="center"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            />
+
+        <EditText
+            android:id="@+id/input_password_confirmation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/input_password"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:hint="confirm password"
+            android:gravity="center"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/toggle_stay_logged_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/input_password_confirmation"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginTop="24dp"
+            android:checked="true"/>
+
+        <TextView
+            android:id="@+id/label_stay_logged_in"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/toggle_stay_logged_in"
+            app:layout_constraintTop_toTopOf="@id/toggle_stay_logged_in"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:text="keep me logged in"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/toggle_agreement_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/toggle_stay_logged_in"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginTop="24dp"
+            android:checked="false"/>
+
+        <TextView
+            android:id="@+id/label_agreement_read"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/toggle_agreement_read"
+            app:layout_constraintTop_toTopOf="@id/toggle_agreement_read"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:text="I have read, and agree to the Scrumble end user agreement"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            />
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/label_agreement_read"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+            android:layout_marginTop="24dp"
+            android:text="register"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</ScrollView>

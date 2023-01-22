@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/rounded_rectangle_outline"
+    android:layout_marginBottom="16dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_1_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_2_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.66"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_mid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <include layout="@layout/profile"
+        android:id="@+id/profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_mid"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/location_pin_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/profile"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_mid"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="0.8:1"
+        android:src="@drawable/ic_pin"
+        android:scaleType="centerInside"
+        android:padding="6dp"
+        android:layout_marginStart="6dp"
+        android:tint="@color/tint_1"/>
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/location_pin_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingLeft="12dp"
+        android:text="12 miles away"
+        android:gravity="left|center"/>
+
+    <ImageView
+        android:id="@+id/image_preview_large"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_mid"
+        app:layout_constraintDimensionRatio="1:1.2"
+        android:src="@drawable/map_static"
+        android:scaleType="centerCrop"
+        android:paddingRight="12dp"
+        android:layout_marginTop="12dp"/>
+
+    <ImageView
+        android:id="@+id/image_preview_small"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/image_preview_large"
+        app:layout_constraintTop_toBottomOf="@id/profile"
+        app:layout_constraintBottom_toTopOf="@id/option_view_more"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/map_static"
+        android:paddingLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/option_view_more"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/image_preview_large"
+        app:layout_constraintTop_toBottomOf="@id/image_preview_small"
+        app:layout_constraintBottom_toBottomOf="@id/image_preview_large"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/map_static"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/rounded_rectangle_outline"
+        android:clickable="true"/>
+
+    <View
+        android:id="@+id/divider_bottom"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/medium_outline"
+        app:layout_constraintTop_toBottomOf="@id/image_preview_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+    <ImageButton
+        android:id="@+id/button_like"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_baseline_thumb_up_24"
+        app:layout_constraintTop_toBottomOf="@id/divider_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_1_3"
+        app:layout_constraintDimensionRatio="1:0.3"
+        android:layout_marginTop="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+    <ImageButton
+        android:id="@+id/button_comments"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_baseline_insert_comment_24"
+        app:layout_constraintTop_toBottomOf="@id/divider_bottom"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1_3"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2_3"
+        app:layout_constraintDimensionRatio="1:0.3"
+        android:layout_marginTop="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+    <ImageButton
+        android:id="@+id/button_reactions"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_baseline_add_reaction_24"
+        app:layout_constraintTop_toBottomOf="@id/divider_bottom"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_2_3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1:0.3"
+        android:layout_marginTop="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
