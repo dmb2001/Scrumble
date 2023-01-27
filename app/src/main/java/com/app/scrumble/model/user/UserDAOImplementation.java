@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class UserDAOImplementation implements UserDAO{
     SQLiteDatabase database;
 
-    UserDAOImplementation (SQLiteDatabase database) {
+    public UserDAOImplementation (SQLiteDatabase database) {
         this.database = database;
     }
 

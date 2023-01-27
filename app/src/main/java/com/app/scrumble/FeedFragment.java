@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.model.Location;
-import com.app.scrumble.model.Scrapbook;
+import com.app.scrumble.model.scrapbook.Location;
+import com.app.scrumble.model.scrapbook.Scrapbook;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 

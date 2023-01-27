@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.app.scrumble.Scrumble;
 import com.app.scrumble.model.user.User;
+import com.app.scrumble.model.user.UserDAO;
+import com.app.scrumble.model.user.UserDAOImplementation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,9 +22,12 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     private SQLiteDatabase database;
     private Scrapbook.ScrapBookBuilder builder = new Scrapbook.ScrapBookBuilder();
 
+    private UserDAOImplementation userDAO;
+
     //Constructor which takes an SQLite Database
     public DemoScrapbookDAO(SQLiteDatabase newDataBase) {
         database = newDataBase;
+        UserDAOImplementation userDAO = new UserDAOImplementation(database);
     }
 
     private Comment queryCommentByID(long id) {
@@ -36,7 +42,9 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
 
         long timeStamp = c.getLong(4);
         String commentText = c.getString(3);
-        User author = null;
+
+        //Get the author from the UserDAO
+        User author = userDAO.queryUserByID(c.getLong(1));
 
         //Now query the ParentChildComments Table for any children of this comment (recursively)
         Cursor c2 = database.rawQuery("SELECT * FROM ParentChildComments WHERE ParentCommentID=?",new String[]{Long.toString(id)});
@@ -64,9 +72,8 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             return null;
         }
 
-        //Once Robbie implements the UserDAO, will also add the ability to set the owner of the Scrapbook by
-        //querying for its User ID
-        User author = null;
+        //Get the author by using the UserDAO implementation to query a User by ID
+        User author = userDAO.queryUserByID(c.getLong(1));
 
         //Get the likes from the result
         long likes = c.getLong(2);
@@ -123,7 +130,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         Set<Scrapbook> result = new HashSet<>();
 
         //Get all scrapbook IDs from scrapbooks whose user ID matches with that of the user in the method
-        Cursor c = database.rawQuery("SELECT ScrapbookID FROM Scrapbooks WHERE UserID=?",new String[]{Long.toString(user.getID())});
+        Cursor c = database.rawQuery("SELECT ScrapbookID FROM Scrapbooks WHERE UserID=?",new String[]{Long.toString(user.getId())});
         while (c.moveToNext()) {
             Scrapbook nextBook = queryScrapbookByID(c.getLong(0));
             if (nextBook != null) {
@@ -138,7 +145,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     public void createScrapbook(Scrapbook scrapbook) {
         ContentValues scrapbookValues = new ContentValues();
         scrapbookValues.put("ScrapbookID",scrapbook.getID());
-        scrapbookValues.put("UserID",scrapbook.getOwner().getID());
+        scrapbookValues.put("UserID",scrapbook.getOwner().getId());
         scrapbookValues.put("Likes",scrapbook.getLikes());
         scrapbookValues.put("Title",scrapbook.getTitle());
         scrapbookValues.put("Description",scrapbook.getDescription());
@@ -168,7 +175,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     public void createComment(Comment comment, long scrapbookID) {
         ContentValues commentValues = new ContentValues();
         commentValues.put("CommentID",comment.getID());
-        commentValues.put("AuthorID",comment.getAuthor().getID());
+        commentValues.put("AuthorID",comment.getAuthor().getId());
         commentValues.put("ScrapbookID",scrapbookID);
         commentValues.put("CommentText",comment.getContent());
         commentValues.put("Timestamp",comment.getTimeStamp());

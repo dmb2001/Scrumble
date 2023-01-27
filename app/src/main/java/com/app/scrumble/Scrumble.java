@@ -7,6 +7,7 @@ import com.app.scrumble.model.CustomDatabaseOpenHelper;
 import com.app.scrumble.model.scrapbook.DemoScrapbookDAO;
 import com.app.scrumble.model.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.UserDAO;
+import com.app.scrumble.model.user.UserDAOImplementation;
 
 public class Scrumble extends Application {
 
@@ -19,10 +20,7 @@ public class Scrumble extends Application {
         return database;
     }
 
-    public final UserDAO getUserDAO(){
-//        return your implementation of UserDAO, passing it the Database returned by getDatabase()
-        return null;
-    }
+    public final UserDAO getUserDAO(){ return new UserDAOImplementation(database);}
 
     public final ScrapbookDAO getScrapBookDAO(){
         return new DemoScrapbookDAO(database);

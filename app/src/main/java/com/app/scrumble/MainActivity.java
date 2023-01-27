@@ -22,12 +22,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-import com.app.scrumble.model.Comment;
-import com.app.scrumble.model.Entry;
-import com.app.scrumble.model.Group;
-import com.app.scrumble.model.Location;
-import com.app.scrumble.model.Scrapbook;
-import com.app.scrumble.model.User;
+import com.app.scrumble.model.scrapbook.Comment;
+import com.app.scrumble.model.scrapbook.Entry;
+import com.app.scrumble.model.group.Group;
+import com.app.scrumble.model.scrapbook.Location;
+import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
