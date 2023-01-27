@@ -10,13 +10,15 @@ public class User {
     private String email;
     private String name;
     private String password;
+    private long userType;
 
-    public User(String name, String email, String password, String username, long id){
+    public User(String name, String email, String password, String username, long id, long userType){
         this.username = username;
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.userType = userType;
     }
 
     public String getName() {
@@ -34,6 +36,10 @@ public class User {
     public String getUsername() {
         return username;
     }
+
+    public long getId() { return id; }
+
+    public long getUserType() { return userType; }
 
     @Override
     public String toString() {

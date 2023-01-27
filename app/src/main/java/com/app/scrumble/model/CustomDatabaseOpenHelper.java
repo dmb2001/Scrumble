@@ -25,6 +25,7 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                 "CREATE TABLE Users (" +
                         "UserID INTEGER PRIMARY KEY," +
                         "Name TEXT NOT NULL," +
+                        "Username TEXT NOT NULL," +
                         "Email TEXT NOT NULL," +
                         "UserType INTEGER NOT NULL DEFAULT 0," +
                         "Password TEXT NOT NULL"
