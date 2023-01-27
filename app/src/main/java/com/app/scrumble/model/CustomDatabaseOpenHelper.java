@@ -1,4 +1,4 @@
-package com.app.scrumble;
+package com.app.scrumble.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,11 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "TEST_DATABASE.db";
+    private static final String DATABASE_NAME = "DB.db";
 
     private static final int DATABASE_VERSION = 1;
-
-    static final String TABLE_NAME = "TABLE_NAME";
 
     public CustomDatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

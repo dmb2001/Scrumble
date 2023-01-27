@@ -3,6 +3,7 @@
     package="com.app.scrumble">
 
     <application
+        android:name=".Scrumble"
         android:allowBackup="false"
         android:fullBackupOnly="false"
         android:icon="@mipmap/ic_launcher"
