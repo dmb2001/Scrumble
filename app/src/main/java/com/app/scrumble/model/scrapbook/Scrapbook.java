@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Use a {@link ScrapBookBuilder} to build instances of this class
+ */
 public class Scrapbook {
 
     public static final long NEVER_UPDATED = -1;
@@ -92,6 +95,11 @@ public class Scrapbook {
         return mostRecentUpdate;
     }
 
+    /**
+     * use this class to build scrapbooks. You must provide an ID, owner and location for the Scrapbook at the least. Provides a fluent interface so you can chain method calls eg:
+     *
+     * Scrapbook scrapbook = new ScrapBookBuilder().withID(123).withTitle("example_title").build();
+     */
     public static final class ScrapBookBuilder{
 
         private Scrapbook scrapbook;
