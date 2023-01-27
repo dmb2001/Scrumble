@@ -46,4 +46,7 @@ public class Comment {
         return children == null ? 0 : children.size();
     }
 
+    public long getID() {
+        return id;
+    }
 }

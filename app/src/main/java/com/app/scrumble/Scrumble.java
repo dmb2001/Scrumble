@@ -4,6 +4,8 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.app.scrumble.model.CustomDatabaseOpenHelper;
+import com.app.scrumble.model.scrapbook.DemoScrapbookDAO;
+import com.app.scrumble.model.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.UserDAO;
 
 public class Scrumble extends Application {
@@ -22,9 +24,8 @@ public class Scrumble extends Application {
         return null;
     }
 
-    public final UserDAO getScrapBookDAO(){
-//        return your implementation of ScrapBookDAO, passing it the Database returned by getDatabase()
-        return null;
+    public final ScrapbookDAO getScrapBookDAO(){
+        return new DemoScrapbookDAO(database);
     }
 
 }

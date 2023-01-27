@@ -21,6 +21,8 @@ public class Scrapbook {
 
     private Long ID;
 
+    private long likes;
+
     private String title = UNTITLED;
     private String description = NO_DESCRIPTION;
     private User owner;
@@ -29,6 +31,8 @@ public class Scrapbook {
     private Map<Reaction, Integer> reactions = new HashMap<>();
     private List<Entry> entries = new ArrayList<>();
     private List<Comment> comments = new ArrayList<>();
+
+    private long timeStamp;
 
     private Scrapbook(){}
 
@@ -47,6 +51,14 @@ public class Scrapbook {
             }
         }
         return null;
+    }
+
+    public long getLikes() {
+        return likes;
+    }
+
+    public long getTimestamp() {
+        return timeStamp;
     }
 
     public Location getLocation() {
@@ -115,6 +127,12 @@ public class Scrapbook {
             return this;
         }
 
+        public ScrapBookBuilder withLikes(int likeys){
+            Objects.requireNonNull(likeys);
+            this.scrapbook.likes = likeys;
+            return this;
+        }
+
         public ScrapBookBuilder withDescription(String description){
             Objects.requireNonNull(description);
             this.scrapbook.description = description;
@@ -154,6 +172,12 @@ public class Scrapbook {
         public ScrapBookBuilder withComments(List<Comment> comments){
             Objects.requireNonNull(comments);
             this.scrapbook.comments = comments;
+            return this;
+        }
+
+        public ScrapBookBuilder withTimeStamp(long timeStampey){
+            Objects.requireNonNull(timeStampey);
+            this.scrapbook.timeStamp = timeStampey;
             return this;
         }
 

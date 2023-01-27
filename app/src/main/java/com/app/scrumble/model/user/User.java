@@ -35,6 +35,10 @@ public class User {
         return username;
     }
 
+    public long getID() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return username;

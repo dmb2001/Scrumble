@@ -41,8 +41,7 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         "Likes INTEGER DEFAULT 0," +
                         "Title TEXT NOT NULL," +
                         "Description TEXT," +
-                        "Date TEXT NOT NULL," +
-                        "Time TEXT NOT NULL," +
+                        "Timestamp INTEGER NOT NULL," +
                         "Latitude REAL NOT NULL," +
                         "Longitude REAL NOT NULL," +
                         "FOREIGN KEY(UserID) REFERENCES Users(UserID)"
@@ -63,7 +62,8 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         "ScrapbookID INTEGER NOT NULL," +
                         "EntryID INTEGER PRIMARY KEY," +
                         "ImageID INTEGER NOT NULL," +
-                        "Caption VARCHAR(50)," +
+                        "Timestamp INTEGER NOT NULL," +
+                        "Caption TEXT," +
                         "FOREIGN KEY(ScrapbookID) REFERENCES Scrapbooks(ScrapbookID)," +
                         "FOREIGN KEY(ImageID) REFERENCES Images(ImageID)"
                 +")"
@@ -72,10 +72,13 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
         //Create a Table for Comments
         DB.execSQL(
                 "CREATE TABLE Comments (" +
-                        "CommentID INTEGER PRIMARY KEY,"+
-                        "ScrapbookID INTEGER NOT NULL,"+
+                        "CommentID INTEGER PRIMARY KEY," +
+                        "AuthorID INTEGER NOT NULL," +
+                        "ScrapbookID INTEGER NOT NULL," +
                         "CommentText TEXT NOT NULL," +
-                        "FOREIGN KEY(ScrapbookID) REFERENCES Scrapbooks(ScrapbookID)"
+                        "Timestamp INTEGER NOT NULL," +
+                        "FOREIGN KEY(ScrapbookID) REFERENCES Scrapbooks(ScrapbookID)," +
+                        "FOREIGN KEY(AuthorID) REFERENCES Users(UserID)"
                 +")"
         );
 
@@ -96,6 +99,16 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         "UserID INTEGER NOT NULL," +
                         "FOREIGN KEY(GroupID) REFERENCES Groups(GroupID)," +
                         "FOREIGN KEY(UserID) REFERENCES Users(UserID)"
+                +")"
+        );
+
+        //Create a Table for parent-child associations of Comments
+        DB.execSQL(
+                "CREATE TABLE ParentChildComments (" +
+                        "ParentCommentID INTEGER NOT NULL," +
+                        "ChildCommentID INTEGER NOT NULL," +
+                        "FOREIGN KEY(ParentCommentID) REFERENCES Comments(CommentID)," +
+                        "FOREIGN KEY(ChildCommentID) REFERENCES Comments(CommentID)"
                 +")"
         );
     }
