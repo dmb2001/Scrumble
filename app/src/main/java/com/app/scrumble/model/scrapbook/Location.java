@@ -1,4 +1,4 @@
-package com.app.scrumble.model;
+package com.app.scrumble.model.scrapbook;
 
 import java.math.BigDecimal;
 import java.util.Objects;

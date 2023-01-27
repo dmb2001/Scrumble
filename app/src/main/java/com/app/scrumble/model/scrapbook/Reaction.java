@@ -1,4 +1,4 @@
-package com.app.scrumble.model;
+package com.app.scrumble.model.scrapbook;
 
 public enum Reaction {
 

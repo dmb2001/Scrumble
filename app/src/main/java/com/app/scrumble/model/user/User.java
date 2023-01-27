@@ -1,19 +1,19 @@
-package com.app.scrumble.model;
+package com.app.scrumble.model.user;
 
 import java.util.Objects;
 
 public class User {
 
+    private final long id;
     private final String username;
-    private int profilePictureResourceID;
 
     private String email;
     private String name;
     private String password;
 
-    public User(String name, String email, String password, String username, int profilePictureResourceID){
+    public User(String name, String email, String password, String username, long id){
         this.username = username;
-        this.profilePictureResourceID = profilePictureResourceID;
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -33,10 +33,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public int getProfilePictureResourceID(){
-        return profilePictureResourceID;
     }
 
     @Override
