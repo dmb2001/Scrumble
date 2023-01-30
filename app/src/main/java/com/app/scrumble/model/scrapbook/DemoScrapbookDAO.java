@@ -3,31 +3,34 @@ package com.app.scrumble.model.scrapbook;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.app.scrumble.Scrumble;
+import com.app.scrumble.model.CustomDatabaseOpenHelper;
+import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
-import com.app.scrumble.model.user.UserDAOImplementation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+
 //TODO for Tikhon: When Robbie finishes implementing UserDAO, update corresponding functions in DemoScrapbookDAO
 //Todo-2 for Tikhon: At some point, create validation mechanisms for the updating and removing methods
 
 public class DemoScrapbookDAO implements ScrapbookDAO{
 
-    private SQLiteDatabase database;
-    private Scrapbook.ScrapBookBuilder builder = new Scrapbook.ScrapBookBuilder();
+    private final SQLiteDatabase database;
+    private final Scrapbook.ScrapBookBuilder builder = new Scrapbook.ScrapBookBuilder();
 
-    private UserDAOImplementation userDAO;
+    private UserDAO userDAO;
 
     //Constructor which takes an SQLite Database
-    public DemoScrapbookDAO(SQLiteDatabase newDataBase) {
+    public DemoScrapbookDAO(SQLiteDatabase newDataBase, UserDAO userDAO) {
         database = newDataBase;
-        UserDAOImplementation userDAO = new UserDAOImplementation(database);
+        this.userDAO = userDAO;
     }
 
     private Comment queryCommentByID(long id) {
@@ -38,7 +41,6 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         }
 
         c.close();
-
 
         long timeStamp = c.getLong(4);
         String commentText = c.getString(3);
@@ -70,21 +72,23 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         //If the number of returned rows is 0, i.e. no Scrapbook with such an ID exists, return null
         if (c.getCount() == 0) {
             return null;
+        }else{
+            c.moveToFirst();
         }
 
         //Get the author by using the UserDAO implementation to query a User by ID
-        User author = userDAO.queryUserByID(c.getLong(1));
+        User author = userDAO.queryUserByID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_USER_ID)));
 
         //Get the likes from the result
-        long likes = c.getLong(2);
+        long likes = c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LIKES));
 
         //Get the title, description and timestamp of the Scrapbook from the result
-        String title = c.getString(3);
-        String description = c.getString(4);
-        long timeStamp = c.getLong(5);
+        String title = c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TITLE));
+        String description = c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_DESCRIPTION));
+        long timeStamp = c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TIMESTAMP));
 
         //Get the location from the latitude and longitude columns of the result
-        Location location = new Location(c.getDouble(6),c.getDouble(7));
+        Location location = new Location(c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LONGITUDE)));
 
         //Close the Cursor
         c.close();
@@ -109,20 +113,37 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public Set<Scrapbook> queryScrapbooksByLocation(Location start, long maxDistance) {
+        Log.d("DEBUGGING", "querying for scrapbooks within " + maxDistance);
         Set<Scrapbook> result = new HashSet<>();
 
-        Cursor c = database.rawQuery("SELECT ScrapbookID FROM Scrapbooks",new String[]{});
-        //Go through every row in the database, converting it into a scrapbook and checking the distance to the
-        //starting point - if it's less than or equal to the max, add it to the hashset
-        while (c.moveToNext()) {
-            Scrapbook nextBook = queryScrapbookByID(c.getLong(0));
-            if (nextBook != null && nextBook.getLocation().distanceFrom(start) <= maxDistance) {
-                result.add(nextBook);
+        Cursor c = database.rawQuery("SELECT * FROM Scrapbooks",new String[]{});
+        Log.d("DEBUGGING", "There are: " + c.getCount() + " total scrapbooks");
+        if(c.getCount() == 0){
+            return null;
+        }else{
+//            c.moveToFirst();
+            while (c.moveToNext()){
+                Location location = new Location(c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LONGITUDE)));
+                Log.d("DEBUGGING", "distance from stored Scrapbook: " + Location.distanceBetween(start, location));
+                if(Location.distanceBetween(start, location) <= maxDistance){
+                    result.add(
+                            new ScrapBookBuilder()
+                                    .withID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_SCRAPBOOK_ID)))
+                                    .withOwner(userDAO.queryUserByID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_USER_ID))))
+                                    .withLocation(location)
+                                    .withTitle(c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TITLE)))
+                                    .withDescription(c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_DESCRIPTION)))
+                                    .build()
+                    );
+                }
             }
         }
-
         //Return the resulting hashset
-        return result;
+        if(result.size() > 0){
+            return result;
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -165,7 +186,6 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         ContentValues entryValues = new ContentValues();
         entryValues.put("ScrapbookID",scrapbookID);
         entryValues.put("EntryID",entry.getID());
-        entryValues.put("ImageID",entry.getImageResource());
         entryValues.put("Timestamp",entry.getTimeStamp());
         entryValues.put("Caption",entry.getCaption());
         database.insert("Entries",null,entryValues);

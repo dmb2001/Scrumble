@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class User {
 
+    public static final long TYPE_USER = 0;
+    public static final long TYPE_ADMIN = 1;
+
     private final long id;
     private final String username;
 
@@ -12,13 +15,16 @@ public class User {
     private String password;
     private long userType;
 
-    public User(String name, String email, String password, String username, long id){
+    public User(String name, String email, String password, String username, long id, long userType){
         this.username = username;
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userType = 0;
+        if(userType != TYPE_USER && userType != TYPE_ADMIN){
+            throw new IllegalArgumentException();
+        }
+        this.userType = userType;
     }
 
     public String getName() {

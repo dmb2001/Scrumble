@@ -40,9 +40,9 @@ public class FeedFragment extends BaseFragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View parentLayout = inflater.inflate(R.layout.fragment_feed, container, false);
-        RecyclerView feed = parentLayout.findViewById(R.id.feed_item_list);
-        feed.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        feed.setAdapter(new FeedAdapter(getScrapbooks(), getCurrentLocation(), (MainActivity) getActivity()));
+//        RecyclerView feed = parentLayout.findViewById(R.id.feed_item_list);
+//        feed.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+//        feed.setAdapter(new FeedAdapter(getScrapbooks(), getCurrentLocation(), (MainActivity) getActivity()));
         return parentLayout;
     }
 
@@ -57,98 +57,98 @@ public class FeedFragment extends BaseFragment{
         return NAME_FEED;
     }
 
-    public final class FeedAdapter extends Adapter<FeedItemViewHolder>{
-
-        private final MainActivity mainActivity;
-
-        private final Location currentLocation;
-        private final List<Scrapbook> recentScrapbooks;
-
-        private FeedAdapter(List<Scrapbook> scrapbooks, Location currentLocation, MainActivity mainActivity){
-            this.recentScrapbooks = scrapbooks;
-            this.currentLocation = currentLocation;
-            this.mainActivity = mainActivity;
-        }
-
-        @NonNull
-        @Override
-        public FeedItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new FeedItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull FeedItemViewHolder holder, int position) {
-
-            Scrapbook scrapbook = recentScrapbooks.get(position);
-            Glide
-                    .with(getContext())
-                    .load(scrapbook.getOwner().getProfilePictureResourceID())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.profilePicture);
-
-            Glide
-                    .with(getContext())
-                    .load(scrapbook.getEntries().get(0).getImageResource())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.preview_large);
-
-            Glide
-                    .with(getContext())
-                    .load(scrapbook.getEntries().get(1).getImageResource())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.preview_small);
-
-            holder.distance.setText(scrapbook.getLocation().distanceFrom(currentLocation) + " miles away");
-
-            holder.username.setText("@" + scrapbook.getOwner().getUsername());
-            holder.postDate.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
-
-            holder.viewMoreOption.setText("+ " + (recentScrapbooks.get(position).getEntries().size() - 2) + " more");
-            holder.viewMoreOption.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mainActivity.showAsMainContent(ScrapBookFragment.newInstance(recentScrapbooks.get(position).getID()), true);
-                        }
-                    }
-            );
-
-            holder.commentsButton.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mainActivity.showAsMainContent(CommentsFragment.newInstance(), true);
-                        }
-                    }
-            );
-            holder.likeButton.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(mainActivity.getApplicationContext(), "You have liked " + recentScrapbooks.get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-
-            holder.reactionButton.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(mainActivity.getApplicationContext(), "You have reacted to " + recentScrapbooks.get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        }
-
-        @Override
-        public int getItemCount() {
-            return recentScrapbooks == null ? 0 : recentScrapbooks.size();
-        }
-
-    }
+//    public final class FeedAdapter extends Adapter<FeedItemViewHolder>{
+//
+//        private final MainActivity mainActivity;
+//
+//        private final Location currentLocation;
+//        private final List<Scrapbook> recentScrapbooks;
+//
+//        private FeedAdapter(List<Scrapbook> scrapbooks, Location currentLocation, MainActivity mainActivity){
+//            this.recentScrapbooks = scrapbooks;
+//            this.currentLocation = currentLocation;
+//            this.mainActivity = mainActivity;
+//        }
+//
+//        @NonNull
+//        @Override
+//        public FeedItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//            return new FeedItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false));
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull FeedItemViewHolder holder, int position) {
+//
+//            Scrapbook scrapbook = recentScrapbooks.get(position);
+//            Glide
+//                    .with(getContext())
+//                    .load(scrapbook.getOwner().getProfilePictureResourceID())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.profilePicture);
+//
+//            Glide
+//                    .with(getContext())
+//                    .load(scrapbook.getEntries().get(0).getImageResource())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.preview_large);
+//
+//            Glide
+//                    .with(getContext())
+//                    .load(scrapbook.getEntries().get(1).getImageResource())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.preview_small);
+//
+//            holder.distance.setText(scrapbook.getLocation().distanceFrom(currentLocation) + " miles away");
+//
+//            holder.username.setText("@" + scrapbook.getOwner().getUsername());
+//            holder.postDate.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
+//
+//            holder.viewMoreOption.setText("+ " + (recentScrapbooks.get(position).getEntries().size() - 2) + " more");
+//            holder.viewMoreOption.setOnClickListener(
+//                    new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            mainActivity.showAsMainContent(ScrapBookFragment.newInstance(recentScrapbooks.get(position).getID()), true);
+//                        }
+//                    }
+//            );
+//
+//            holder.commentsButton.setOnClickListener(
+//                    new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            mainActivity.showAsMainContent(CommentsFragment.newInstance(), true);
+//                        }
+//                    }
+//            );
+//            holder.likeButton.setOnClickListener(
+//                    new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Toast.makeText(mainActivity.getApplicationContext(), "You have liked " + recentScrapbooks.get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//            );
+//
+//            holder.reactionButton.setOnClickListener(
+//                    new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Toast.makeText(mainActivity.getApplicationContext(), "You have reacted to " + recentScrapbooks.get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//            );
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return recentScrapbooks == null ? 0 : recentScrapbooks.size();
+//        }
+//
+//    }
 
     public static final class FeedItemViewHolder extends ViewHolder{
 

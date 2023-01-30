@@ -1,22 +1,31 @@
 package com.app.scrumble;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
 
-import com.app.scrumble.model.Comment;
-import com.app.scrumble.model.Group;
-import com.app.scrumble.model.Location;
-import com.app.scrumble.model.Scrapbook;
-import com.app.scrumble.model.User;
+import com.app.scrumble.model.scrapbook.ScrapbookDAO;
+import com.app.scrumble.model.user.User;
+import com.app.scrumble.model.user.UserDAO;
 
-import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public abstract class BaseFragment extends Fragment {
 
-    Location currentLocation = new Location(55.9476, -3.1467);
+    private static final Executor backgroundExecutor = Executors.newSingleThreadExecutor();
+
+    protected void setCurrentUser(User user){
+        ((MainActivity)getActivity()).setCurrentUser(user);
+    }
+
+    protected User getCurrentUser(){
+        return ((MainActivity)getActivity()).getCurrentUser();
+    }
 
     protected final void showAsMainContent(Fragment fragment, boolean addTransactionToBackStack){
         ((MainActivity)getActivity()).showAsMainContent(fragment, addTransactionToBackStack);
@@ -26,29 +35,17 @@ public abstract class BaseFragment extends Fragment {
         ((MainActivity)getActivity()).showAsNavigation(fragment);
     }
 
-    protected final List<Scrapbook> getScrapbooks(){
-        return ((MainActivity)getActivity()).getScrapbooks();
+    protected final UserDAO getUserDAO(){
+        return ((MainActivity)getActivity()).getUserDAO();
     }
 
-    protected Location getCurrentLocation(){
-        return currentLocation;
-    }
-
-    protected Scrapbook getScrapbookByID(long ID){
-        return ((MainActivity)getActivity()).getScrapbookByID(ID);
+    protected final ScrapbookDAO getScrapBookDAO(){
+        return ((MainActivity)getActivity()).getScrapBookDAO();
     }
 
     protected void hideKeyBoard(View view){
         InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    protected List<User> getUsers() {
-        return ((MainActivity)getActivity()).getUsers();
-    }
-
-    protected User getUserByUsername(String username){
-        return ((MainActivity)getActivity()).getUsersByUsername(username);
     }
 
     protected void popBackStack(){
@@ -59,35 +56,22 @@ public abstract class BaseFragment extends Fragment {
         ((MainActivity)getActivity()).popEntireBackStack();
     }
 
-    protected final List<Comment> getComments(){
-        return ((MainActivity)getActivity()).getComments();
-    }
-
-    protected final Comment getCommentByResourceID(int resourceID){
-        return ((MainActivity)getActivity()).getCommentByResourceID(resourceID);
-    }
-
-    protected final User getCurrentUser(){
-        return ((MainActivity)getActivity()).getCurrentUser();
-    }
-
-    protected void setCurrentUser(User currentUser){
-        ((MainActivity)getActivity()).setCurrentUser(currentUser);
-    }
-
     protected void hideNavigationBar(){
         ((MainActivity)getActivity()).hideNavigationBar();
     }
 
+    protected void runInBackground(Runnable runnable){
+        backgroundExecutor.execute(runnable);
+    }
+
+    protected void runOnUIThread(Runnable runnable){
+        new Handler(Looper.getMainLooper()).post(runnable);
+    }
+
+    protected final boolean isSafe(){
+        return !isRemoving() && (getActivity() != null) && !isDetached() && isAdded() && getView() != null;
+    }
+
     public abstract String name();
-
-    protected final List<Group> getGroups(){
-        return ((MainActivity)getActivity()).getGroups();
-    }
-
-    protected final Group getGroupByName(String name){
-        return ((MainActivity)getActivity()).getGroupByName(name);
-    }
-
 
 }

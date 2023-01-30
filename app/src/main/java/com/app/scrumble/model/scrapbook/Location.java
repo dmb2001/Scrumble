@@ -16,11 +16,19 @@ public class Location {
         this.longitude = longitude;
     }
 
-    private double radians(double x){
+    private static double radians(double x){
         return x * PIx / 180;
     }
 
-    public double distanceBetween(
+    /**
+     * Returns the distance, in km, between two sets of latitude/longitude
+     * @param lon1
+     * @param lat1
+     * @param lon2
+     * @param lat2
+     * @return
+     */
+    public static double distanceBetween(
             double lon1,
             double lat1,
             double lon2,
@@ -42,13 +50,24 @@ public class Location {
     }
 
     /**
-     * distance in miles between the two locations
+     * distance in metres between the two locations
      * @param location
      * @return
      */
-    public int distanceFrom(Location location){
+    public long distanceFrom(Location location){
         Objects.requireNonNull(location);
-        return BigDecimal.valueOf(distanceBetween(this.longitude, this.latitude, location.getLongitude(), location.getLatitude())*0.621371).intValue();
+        return BigDecimal.valueOf(distanceBetween(this.longitude, this.latitude, location.getLongitude(), location.getLatitude())*1000).longValue();
+    }
+
+    /**
+     * @param locationA
+     * @param locationB
+     * @return The distance in metres between the two locations
+     */
+    public static long distanceBetween(Location locationA, Location locationB){
+        Objects.requireNonNull(locationA);
+        Objects.requireNonNull(locationB);
+        return BigDecimal.valueOf(distanceBetween(locationA.longitude, locationA.latitude, locationB.getLongitude(), locationB.getLatitude())*1000).longValue();
     }
 
 }

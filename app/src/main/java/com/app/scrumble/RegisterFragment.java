@@ -13,9 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
-import com.app.scrumble.model.User;
+import com.app.scrumble.model.user.User;
+
+import java.util.UUID;
 
 public class RegisterFragment extends BaseFragment{
+
+    private final long newUserID =  UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
 
     public static RegisterFragment newInstance() {
         Bundle args = new Bundle();
@@ -57,10 +61,28 @@ public class RegisterFragment extends BaseFragment{
                         }else if(!agreementSwitch.isChecked()){
                             Toast.makeText(getContext(), "you must agree to the Scrumble end user agreement", Toast.LENGTH_SHORT).show();
                         }else{
-                            setCurrentUser(new User(nameInput.getText().toString().trim(), emailInput.getText().toString().trim(), passwordInput.getText().toString().trim(), usernameInput.getText().toString().trim(), R.drawable.ic_blank_profile_pic_grey_background));
-                            hideKeyBoard(view);
-                            popEntireBackStack();
-                            showAsMainContent(MapFragment.newInstance(), false);
+                            User newUser = new User(nameInput.getText().toString().trim(), emailInput.getText().toString().trim(), passwordInput.getText().toString().trim(), usernameInput.getText().toString().trim(), newUserID, User.TYPE_USER);
+                            runInBackground(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (isSafe()) {
+                                                getUserDAO().create(newUser);
+                                                runOnUIThread(
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if(isSafe()){
+                                                                    hideKeyBoard(view);
+                                                                    setCurrentUser(newUser);
+                                                                }
+                                                            }
+                                                        }
+                                                );
+                                            }
+                                        }
+                                    }
+                            );
                         }
                     }
                 }

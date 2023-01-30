@@ -25,8 +25,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/profile_picture_guideline"
-        android:src="@drawable/image_user_pp_1"/>
+        app:layout_constraintEnd_toStartOf="@id/profile_picture_guideline"/>
 
     <TextView
         android:id="@+id/user_name"

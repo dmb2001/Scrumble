@@ -11,13 +11,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.app.scrumble.model.Scrapbook;
-
 public class ScrapbookNavigationFragment extends BaseFragment{
 
     private static final String KEY_SCRAPBOOK_ID = "KEY_SCRAPBOOK_ID";
 
-    private Scrapbook scrapbook;
+//    private Scrapbook scrapbook;
 
     private ImageButton commentsButton;
     private ImageButton likeButton;
@@ -35,44 +33,46 @@ public class ScrapbookNavigationFragment extends BaseFragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.scrapbook = getScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+
         View parentLayout = inflater.inflate(R.layout.fragment_scrapbook_navigation, container, false);
-        commentsButton = parentLayout.findViewById(R.id.button_comments);
-        commentsButton.setOnClickListener(
-                new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showAsMainContent(CommentsFragment.newInstance(), true);
-                    }
-                }
-        );
-        likeButton = parentLayout.findViewById(R.id.button_like);
-        likeButton.setOnClickListener(
-                new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(), ("You have liked " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-        reactionButton = parentLayout.findViewById(R.id.button_reactions);
-        reactionButton.setOnClickListener(
-                new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(), ("You have reacted " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-        flagButton = parentLayout.findViewById(R.id.button_report);
-        flagButton.setOnClickListener(
-                new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getContext(), ("You have reported " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
+
+//        this.scrapbook = getScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+//        commentsButton = parentLayout.findViewById(R.id.button_comments);
+//        commentsButton.setOnClickListener(
+//                new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        showAsMainContent(CommentsFragment.newInstance(), true);
+//                    }
+//                }
+//        );
+//        likeButton = parentLayout.findViewById(R.id.button_like);
+//        likeButton.setOnClickListener(
+//                new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(getContext(), ("You have liked " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//        );
+//        reactionButton = parentLayout.findViewById(R.id.button_reactions);
+//        reactionButton.setOnClickListener(
+//                new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(getContext(), ("You have reacted " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//        );
+//        flagButton = parentLayout.findViewById(R.id.button_report);
+//        flagButton.setOnClickListener(
+//                new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(getContext(), ("You have reported " + scrapbook.getOwner().getUsername() + "'s scrapbook"), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//        );
 
         return parentLayout;
     }

@@ -107,6 +107,19 @@ public class Scrapbook {
         return mostRecentUpdate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Scrapbook scrapbook = (Scrapbook) o;
+        return likes == scrapbook.likes && timeStamp == scrapbook.timeStamp && ID.equals(scrapbook.ID) && Objects.equals(title, scrapbook.title) && Objects.equals(description, scrapbook.description) && owner.equals(scrapbook.owner) && location.equals(scrapbook.location) && Objects.equals(tags, scrapbook.tags) && Objects.equals(reactions, scrapbook.reactions) && Objects.equals(entries, scrapbook.entries) && Objects.equals(comments, scrapbook.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, likes, title, description, owner, location, tags, reactions, entries, comments, timeStamp);
+    }
+
     /**
      * use this class to build scrapbooks. You must provide an ID, owner and location for the Scrapbook at the least. Provides a fluent interface so you can chain method calls eg:
      *
@@ -114,7 +127,7 @@ public class Scrapbook {
      */
     public static final class ScrapBookBuilder{
 
-        private Scrapbook scrapbook;
+        private Scrapbook scrapbook = new Scrapbook();
 
         public ScrapBookBuilder withID(long id){
             this.scrapbook.ID = id;
@@ -187,7 +200,7 @@ public class Scrapbook {
             Objects.requireNonNull(scrapbook.location);
 
             Scrapbook configuredScrapbook = this.scrapbook;
-            this.scrapbook = null;
+            this.scrapbook = new Scrapbook();
 
             return configuredScrapbook;
         }

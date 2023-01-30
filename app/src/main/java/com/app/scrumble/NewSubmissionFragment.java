@@ -1,9 +1,6 @@
 package com.app.scrumble;
 
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +15,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 
+import com.app.scrumble.model.scrapbook.Location;
+import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 public class NewSubmissionFragment extends BaseFragment{
 
     public static final String NAME = "NEW_SUBMISSION";
+    private static final String KEY_LAT = "KEY_LAT";
+    private static final String KEY_LONG = "KEY_LANG";
 
     private Button submitButton;
 
@@ -44,8 +44,14 @@ public class NewSubmissionFragment extends BaseFragment{
 
     private int tagCount = 0;
 
-    public static NewSubmissionFragment newInstance() {
+    private long uniqueID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+
+    private Location location;
+
+    public static NewSubmissionFragment newInstance(Location location) {
         Bundle args = new Bundle();
+        args.putDouble(KEY_LAT, location.getLatitude());
+        args.putDouble(KEY_LONG, location.getLongitude());
         NewSubmissionFragment fragment = new NewSubmissionFragment();
         fragment.setArguments(args);
         return fragment;
@@ -67,8 +73,34 @@ public class NewSubmissionFragment extends BaseFragment{
                         }else if(!anImageIsSelected()){
                             Toast.makeText(getContext(), "You must select at least one image for this scrapbook", Toast.LENGTH_LONG).show();
                         }else{
-                            Toast.makeText(getContext(), "Your scrapbook has been submitted!", Toast.LENGTH_LONG).show();
-                            popBackStack();
+                            runInBackground(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(isSafe()){
+                                                Scrapbook scrapbook =
+                                                        new ScrapBookBuilder()
+                                                                .withID(uniqueID)
+                                                                .withTitle(titleField.getText().toString())
+                                                                .withDescription(descriptionField.getText().toString())
+                                                                .withLocation(getLocation())
+                                                                .withOwner(getCurrentUser()).withTimeStamp(System.currentTimeMillis())
+                                                                .build();
+
+                                                getScrapBookDAO().createScrapbook(scrapbook);
+                                                runOnUIThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if(isSafe()){
+                                                            Toast.makeText(getContext(), "Your scrapbook has been submitted!", Toast.LENGTH_LONG).show();
+                                                            popBackStack();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                            );
                         }
                     }
                 }
@@ -131,6 +163,13 @@ public class NewSubmissionFragment extends BaseFragment{
         imageSelectedIndicator3 = parentLayout.findViewById(R.id.selectable_image_3_selected_indicator);
         imageSelectedIndicator3.setOnClickListener(imageClickListener);
         return parentLayout;
+    }
+
+    private Location getLocation(){
+        if(location == null){
+            location = new Location(getArguments().getDouble(KEY_LAT), getArguments().getDouble(KEY_LONG));
+        }
+        return location;
     }
 
     private boolean inputHasBeenProvidedTo(EditText input){

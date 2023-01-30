@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.model.Group;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
@@ -34,9 +33,9 @@ public class GroupFeedFragment extends BaseFragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View parentLayout = inflater.inflate(R.layout.fragment_group_feed, container, false);
-        RecyclerView list = parentLayout.findViewById(R.id.group_item_list);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.setAdapter(new FeedAdapter());
+//        RecyclerView list = parentLayout.findViewById(R.id.group_item_list);
+//        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+//        list.setAdapter(new FeedAdapter());
         return parentLayout;
     }
 
@@ -52,57 +51,57 @@ public class GroupFeedFragment extends BaseFragment{
         return null;
     }
 
-    private final class FeedAdapter extends Adapter<GroupFeedItemViewHolder>{
-
-        @NonNull
-        @Override
-        public GroupFeedItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new GroupFeedItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.group_feed_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull GroupFeedItemViewHolder holder, int position) {
-            Group group = getGroups().get(position);
-
-            holder.name.setText(group.getName());
-            holder.userCount.setText(group.getMembers().size() + " members");
-
-            Glide
-                    .with(getContext())
-                    .load(group.getGroupPhotoResourceID())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.groupProfilePicture);
-
-            Glide
-                    .with(getContext())
-                    .load(group.getRecentPosts().get(0).getEntries().get(0).getImageResource())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.previewImage1);
-
-            Glide
-                    .with(getContext())
-                    .load(group.getRecentPosts().get(1).getEntries().get(0).getImageResource())
-                    .centerCrop()
-                    .format(DecodeFormat.PREFER_RGB_565)
-                    .into(holder.previewImage2);
-
-            holder.moreButton.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            showAsMainContent(GroupFragment.newInstance(group.getName()), true);
-                        }
-                    }
-            );
-        }
-
-        @Override
-        public int getItemCount() {
-            return getGroups().size();
-        }
-    }
+//    private final class FeedAdapter extends Adapter<GroupFeedItemViewHolder>{
+//
+//        @NonNull
+//        @Override
+//        public GroupFeedItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//            return new GroupFeedItemViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.group_feed_item, parent, false));
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull GroupFeedItemViewHolder holder, int position) {
+//            Group group = getGroups().get(position);
+//
+//            holder.name.setText(group.getName());
+//            holder.userCount.setText(group.getMembers().size() + " members");
+//
+//            Glide
+//                    .with(getContext())
+//                    .load(group.getGroupPhotoResourceID())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.groupProfilePicture);
+//
+//            Glide
+//                    .with(getContext())
+//                    .load(group.getRecentPosts().get(0).getEntries().get(0).getImageResource())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.previewImage1);
+//
+//            Glide
+//                    .with(getContext())
+//                    .load(group.getRecentPosts().get(1).getEntries().get(0).getImageResource())
+//                    .centerCrop()
+//                    .format(DecodeFormat.PREFER_RGB_565)
+//                    .into(holder.previewImage2);
+//
+//            holder.moreButton.setOnClickListener(
+//                    new OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            showAsMainContent(GroupFragment.newInstance(group.getName()), true);
+//                        }
+//                    }
+//            );
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return getGroups().size();
+//        }
+//    }
 
     private static final class GroupFeedItemViewHolder extends ViewHolder{
 

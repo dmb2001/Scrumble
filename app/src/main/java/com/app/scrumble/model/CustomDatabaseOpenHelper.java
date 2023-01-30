@@ -10,6 +10,21 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
 
+    public static final String COLUMN_USER_ID = "UserID";
+    public static final String COLUMN_NAME = "Name";
+    public static final String COLUMN_USERNAME = "Username";
+    public static final String COLUMN_EMAIL = "Email";
+    public static final String COLUMN_USER_TYPE = "UserType";
+    public static final String COLUMN_PASSWORD = "Password";
+
+    public static final String COLUMN_SCRAPBOOK_ID = "ScrapbookID";
+    public static final String COLUMN_LIKES = "Likes";
+    public static final String COLUMN_TITLE = "Title";
+    public static final String COLUMN_DESCRIPTION = "Description";
+    public static final String COLUMN_TIMESTAMP = "Timestamp";
+    public static final String COLUMN_LATITUDE = "Latitude";
+    public static final String COLUMN_LONGITUDE = "Longitude";
+
     public CustomDatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -23,12 +38,12 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
         //The password is just a var char. OBVIOUSLY, in later implementations, we'll have a hash or something instead.
         DB.execSQL(
                 "CREATE TABLE Users (" +
-                        "UserID INTEGER PRIMARY KEY," +
-                        "Name TEXT NOT NULL," +
-                        "Username TEXT NOT NULL," +
-                        "Email TEXT NOT NULL," +
-                        "UserType INTEGER NOT NULL DEFAULT 0," +
-                        "Password TEXT NOT NULL"
+                        COLUMN_USER_ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_NAME + " TEXT NOT NULL," +
+                        COLUMN_USERNAME + " TEXT NOT NULL," +
+                        COLUMN_EMAIL + " TEXT NOT NULL," +
+                        COLUMN_USER_TYPE + " INTEGER NOT NULL DEFAULT 0," +
+                        COLUMN_PASSWORD + " TEXT NOT NULL"
                 +")"
         );
 
@@ -37,14 +52,14 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
         //A foreign key references the Scrapbook's User who posted it
         DB.execSQL(
                 "CREATE TABLE Scrapbooks (" +
-                        "ScrapbookID INTEGER PRIMARY KEY," +
-                        "UserID INTEGER NOT NULL," +
-                        "Likes INTEGER DEFAULT 0," +
-                        "Title TEXT NOT NULL," +
-                        "Description TEXT," +
-                        "Timestamp INTEGER NOT NULL," +
-                        "Latitude REAL NOT NULL," +
-                        "Longitude REAL NOT NULL," +
+                        COLUMN_SCRAPBOOK_ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_USER_ID + " INTEGER NOT NULL," +
+                        COLUMN_LIKES + " INTEGER DEFAULT 0," +
+                        COLUMN_TITLE + " TEXT NOT NULL," +
+                        COLUMN_DESCRIPTION + " TEXT," +
+                        COLUMN_TIMESTAMP + " INTEGER NOT NULL," +
+                        COLUMN_LATITUDE + " REAL NOT NULL," +
+                        COLUMN_LONGITUDE + " REAL NOT NULL," +
                         "FOREIGN KEY(UserID) REFERENCES Users(UserID)"
                 +")"
         );

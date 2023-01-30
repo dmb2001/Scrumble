@@ -20,10 +20,10 @@ public class Scrumble extends Application {
         return database;
     }
 
-    public final UserDAO getUserDAO(){ return new UserDAOImplementation(database);}
+    public final UserDAO getUserDAO(){ return new UserDAOImplementation(getDatabase());}
 
     public final ScrapbookDAO getScrapBookDAO(){
-        return new DemoScrapbookDAO(database);
+        return new DemoScrapbookDAO(getDatabase(), getUserDAO());
     }
 
 }

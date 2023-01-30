@@ -12,7 +12,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.app.scrumble.model.User;
+import com.app.scrumble.model.user.User;
+
+import java.util.Objects;
 
 public class LoginFragment extends BaseFragment{
 
@@ -44,19 +46,42 @@ public class LoginFragment extends BaseFragment{
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        User dummyUser = new User("J.Doe", "example@example.com", "password", "Scrapbooker01", R.drawable.ic_blank_profile_pic_grey_background);
-                        setCurrentUser(dummyUser);
                         hideKeyBoard(view);
-                        showAsMainContent(MapFragment.newInstance(), false);
-//                        if(usernameField.getText().toString() == null || usernameField.getText().toString().trim().length() == 0){
-//                            Toast.makeText(getContext(), "please enter your username", Toast.LENGTH_SHORT).show();
-//                        }else if(passwordField.getText().toString() == null || passwordField.getText().toString().trim().length() == 0){
-//                            Toast.makeText(getContext(), "please enter your password", Toast.LENGTH_SHORT).show();
-//                        }else if(!USERNAME.equalsIgnoreCase(usernameField.getText().toString().trim()) || !PASSWORD.equalsIgnoreCase(passwordField.getText().toString().trim())){
-//                            Toast.makeText(getContext(), "The username or password you entered were incorrect!", Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            showAsMainContent(MapFragment.newInstance(), false);
-//                        }
+                        if(usernameField.getText().toString() == null || usernameField.getText().toString().trim().length() == 0){
+                            Toast.makeText(getContext(), "please enter your username", Toast.LENGTH_SHORT).show();
+                        }else if(passwordField.getText().toString() == null || passwordField.getText().toString().trim().length() == 0){
+                            Toast.makeText(getContext(), "please enter your password", Toast.LENGTH_SHORT).show();
+                        }else{
+                            runInBackground(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(isSafe()){
+                                                User registeredUser = getUserDAO().queryUserByUsername(usernameField.getText().toString().trim());
+                                                boolean incorrectInfo = false;
+                                                if(registeredUser == null || !Objects.equals(passwordField.getText().toString(), registeredUser.getPassword())){
+                                                    incorrectInfo = true;
+                                                }
+                                                boolean finalIncorrectInfo = incorrectInfo;
+                                                runOnUIThread(
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if(isSafe()){
+                                                                    if(finalIncorrectInfo){
+                                                                        Toast.makeText(getContext(), "The username or password you entered were incorrect!", Toast.LENGTH_SHORT).show();
+                                                                    }else{
+                                                                        setCurrentUser(registeredUser);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                );
+                                            }
+                                        }
+                                    }
+                            );
+                        }
                     }
                 }
         );

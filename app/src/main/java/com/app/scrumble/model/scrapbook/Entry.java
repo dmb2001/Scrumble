@@ -2,26 +2,18 @@ package com.app.scrumble.model.scrapbook;
 
 public final class Entry {
 
-    private long ID = ++ID_COUNTER;
-    private static long ID_COUNTER = 0;
+    private final long ID;
+    private final long timeStamp;
+    private final String caption;
 
-    private long timeStamp;
-    private int imageResource;
-
-    private String caption;
-
-    public Entry(long timestamp, int resourceID, String caption){
+    public Entry(long ID, long timestamp, String caption){
+        this.ID = ID;
         this.timeStamp = timestamp;
-        this.imageResource = resourceID;
         this.caption = caption;
     }
 
     public long getTimeStamp() {
         return timeStamp;
-    }
-
-    public int getImageResource() {
-        return imageResource;
     }
 
     public String getCaption() {
