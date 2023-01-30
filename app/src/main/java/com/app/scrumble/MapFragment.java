@@ -21,6 +21,8 @@ import com.app.scrumble.model.scrapbook.Scrapbook;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapView;
@@ -36,7 +38,7 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import java.util.Objects;
 import java.util.Set;
 
-public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnCameraIdleListener, OnMapLongClickListener, OnMarkerClickListener {
+public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnCameraIdleListener, OnMapLongClickListener, OnMarkerClickListener, OnCameraMoveStartedListener {
 
     public static final String NAME = "MAP";
     private static final String KEY_MARKER_ID = "KEY_MARKER_ID";
@@ -196,6 +198,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         map.setOnCameraIdleListener(this);
         map.setOnMapLongClickListener(this);
         map.setOnMarkerClickListener(this);
+        map.setOnCameraMoveStartedListener(this);
         if(userLocation != null){
             followUser = true;
             centerMapOnSelf(false);
@@ -300,5 +303,12 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
             return true;
         }catch (Exception e){}
         return false;
+    }
+
+    @Override
+    public void onCameraMoveStarted(int reason) {
+        if(reason == OnCameraMoveStartedListener.REASON_GESTURE){
+            followUser = false; 
+        }
     }
 }
