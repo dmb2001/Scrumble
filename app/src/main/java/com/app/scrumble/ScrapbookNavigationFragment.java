@@ -11,11 +11,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.app.scrumble.model.scrapbook.Scrapbook;
+
 public class ScrapbookNavigationFragment extends BaseFragment{
 
     private static final String KEY_SCRAPBOOK_ID = "KEY_SCRAPBOOK_ID";
 
-//    private Scrapbook scrapbook;
+    private Scrapbook scrapbook;
 
     private ImageButton commentsButton;
     private ImageButton likeButton;
@@ -36,16 +38,17 @@ public class ScrapbookNavigationFragment extends BaseFragment{
 
         View parentLayout = inflater.inflate(R.layout.fragment_scrapbook_navigation, container, false);
 
-//        this.scrapbook = getScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
-//        commentsButton = parentLayout.findViewById(R.id.button_comments);
-//        commentsButton.setOnClickListener(
-//                new OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        showAsMainContent(CommentsFragment.newInstance(), true);
-//                    }
-//                }
-//        );
+        commentsButton = parentLayout.findViewById(R.id.button_comments);
+        commentsButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(scrapbook != null){
+                            showAsMainContent(CommentsFragment.newInstance(scrapbook.getID()), true);
+                        }
+                    }
+                }
+        );
 //        likeButton = parentLayout.findViewById(R.id.button_like);
 //        likeButton.setOnClickListener(
 //                new OnClickListener() {
@@ -75,6 +78,31 @@ public class ScrapbookNavigationFragment extends BaseFragment{
 //        );
 
         return parentLayout;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        runInBackground(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if(isSafe()){
+                            final Scrapbook scrapbook = getScrapBookDAO().queryScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+                            runOnUIThread(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(isSafe()){
+                                                ScrapbookNavigationFragment.this.scrapbook = scrapbook;
+                                            }
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                }
+        );
     }
 
     @Override

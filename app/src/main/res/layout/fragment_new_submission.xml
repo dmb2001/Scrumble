@@ -35,85 +35,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/label_title"/>
 
-        <TextView
-            android:id="@+id/label_image_select"
+        <Button
+            android:id="@+id/button_add_entry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/input_title"
-            android:text="Select Images:"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:paddingBottom="12dp"/>
+            android:text="Add memories"/>
 
-        <ImageView
-            android:id="@+id/selectable_image_1"
-            android:layout_width="81dp"
-            android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/memory_carousel"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            app:layout_constraintTop_toBottomOf="@id/button_add_entry"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_image_select"/>
-
-        <ImageView
-            android:id="@+id/selectable_image_1_selected_indicator"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/selectable_image_1"
-            app:layout_constraintBottom_toBottomOf="@id/selectable_image_1"
-            app:layout_constraintStart_toStartOf="@id/selectable_image_1"
-            app:layout_constraintEnd_toEndOf="@id/selectable_image_1"
-            android:background="@color/overlay_medium"
-            android:src="@drawable/ic_baseline_check_24"
-            android:tint="@android:color/white"
-            android:padding="20dp"
-            android:alpha="0.0"/>
-
-        <ImageView
-            android:id="@+id/selectable_image_2"
-            android:layout_width="81dp"
-            android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintStart_toEndOf="@id/selectable_image_1"
-            app:layout_constraintTop_toBottomOf="@id/label_image_select"
-            android:layout_marginLeft="12dp"/>
-
-        <ImageView
-            android:id="@+id/selectable_image_2_selected_indicator"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/selectable_image_2"
-            app:layout_constraintBottom_toBottomOf="@id/selectable_image_2"
-            app:layout_constraintStart_toStartOf="@id/selectable_image_2"
-            app:layout_constraintEnd_toEndOf="@id/selectable_image_2"
-            android:background="@color/overlay_medium"
-            android:src="@drawable/ic_baseline_check_24"
-            android:tint="@android:color/white"
-            android:padding="20dp"
-            android:alpha="0.0"/>
-
-        <ImageView
-            android:id="@+id/selectable_image_3"
-            android:layout_width="81dp"
-            android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintStart_toEndOf="@id/selectable_image_2"
-            app:layout_constraintTop_toBottomOf="@id/label_image_select"
-            android:layout_marginLeft="12dp"/>
-
-        <ImageView
-            android:id="@+id/selectable_image_3_selected_indicator"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/selectable_image_3"
-            app:layout_constraintBottom_toBottomOf="@id/selectable_image_3"
-            app:layout_constraintStart_toStartOf="@id/selectable_image_3"
-            app:layout_constraintEnd_toEndOf="@id/selectable_image_3"
-            android:background="@color/overlay_medium"
-            android:src="@drawable/ic_baseline_check_24"
-            android:tint="@android:color/white"
-            android:padding="20dp"
-            android:alpha="0.0"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <TextView
             android:id="@+id/label_tags"
@@ -122,7 +60,7 @@
             android:text="Tags:"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/selectable_image_1"
+            app:layout_constraintTop_toBottomOf="@id/memory_carousel"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="12dp"/>
@@ -166,7 +104,7 @@
 
         <EditText
             android:id="@+id/input_description"
-            android:hint="Enter your description"
+            android:hint="Enter a description for this scrapbook"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"

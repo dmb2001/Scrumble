@@ -52,6 +52,6 @@ public interface ScrapbookDAO {
      * @param comment A {@link Comment} object containing the values to use when creating the record
      * @param scrapbookID the ID of the {@link Scrapbook} with which this comment is associated
      */
-    void createComment(Comment comment, long scrapbookID);
+    void createComment(Comment comment, long scrapbookID, Long parentCommentID);
 
 }

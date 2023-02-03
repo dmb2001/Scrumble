@@ -4,7 +4,7 @@ public final class Entry {
 
     private final long ID;
     private final long timeStamp;
-    private final String caption;
+    private String caption;
 
     public Entry(long ID, long timestamp, String caption){
         this.ID = ID;
@@ -18,6 +18,10 @@ public final class Entry {
 
     public String getCaption() {
         return caption;
+    }
+
+    public void setCaption(String caption){
+        this.caption = caption;
     }
 
     public long getID() {

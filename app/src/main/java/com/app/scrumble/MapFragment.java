@@ -260,7 +260,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     @Override
                     public void run() {
                         if(isSafe() && userLocation != null){
-                            Set<Scrapbook> result = getScrapBookDAO().queryScrapbooksByLocation(new com.app.scrumble.model.scrapbook.Location(userLocation.latitude, userLocation.longitude), radius);
+                            Set<Scrapbook> result = getScrapBookDAO().queryScrapbooksByLocation(new com.app.scrumble.model.scrapbook.Location(userLocation.latitude, userLocation.longitude), Math.min(radius, 10000));
                             if(result != null && result.size() > 0){
                                 runOnUIThread(
                                         new Runnable() {
@@ -308,7 +308,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     @Override
     public void onCameraMoveStarted(int reason) {
         if(reason == OnCameraMoveStartedListener.REASON_GESTURE){
-            followUser = false; 
+            followUser = false;
         }
     }
 }

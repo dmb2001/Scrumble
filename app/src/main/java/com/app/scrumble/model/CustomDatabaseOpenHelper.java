@@ -25,6 +25,17 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LATITUDE = "Latitude";
     public static final String COLUMN_LONGITUDE = "Longitude";
 
+    public static final String COLUMN_ENTRY_ID = "EntryID";
+    public static final String COLUMN_IMAGE_ID = "ImageID";
+    public static final String COLUMN_CAPTION = "Caption";
+
+    public static final String COLUMN_COMMENT_ID = "CommentID";
+    public static final String COLUMN_COMMENT_TEXT = "CommentText";
+    public static final String COLUMN_PARENT_COMMENT_ID = "ParentCommentID";
+
+    public static final String COLUMN_GROUP_ID = "GroupID";
+    public static final String COLUMN_GROUP_NAME = "GroupName";
+
     public CustomDatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -60,14 +71,14 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         COLUMN_TIMESTAMP + " INTEGER NOT NULL," +
                         COLUMN_LATITUDE + " REAL NOT NULL," +
                         COLUMN_LONGITUDE + " REAL NOT NULL," +
-                        "FOREIGN KEY(UserID) REFERENCES Users(UserID)"
+                        "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES Users(" + COLUMN_USER_ID + ")"
                 +")"
         );
 
         //Create a Table for Storing Image IDs, accessed by the file system
         DB.execSQL(
                 "CREATE TABLE Images (" +
-                        "ImageID INTEGER PRIMARY KEY"
+                        COLUMN_IMAGE_ID + " INTEGER PRIMARY KEY"
                         +")"
         );
 
@@ -75,58 +86,50 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
         //Entries refer to the ID of the Scrapbook they are in
         DB.execSQL(
                 "CREATE TABLE Entries (" +
-                        "ScrapbookID INTEGER NOT NULL," +
-                        "EntryID INTEGER PRIMARY KEY," +
-                        "ImageID INTEGER NOT NULL," +
-                        "Timestamp INTEGER NOT NULL," +
-                        "Caption TEXT," +
-                        "FOREIGN KEY(ScrapbookID) REFERENCES Scrapbooks(ScrapbookID)," +
-                        "FOREIGN KEY(ImageID) REFERENCES Images(ImageID)"
+                        COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL," +
+                        COLUMN_ENTRY_ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_IMAGE_ID + " INTEGER NOT NULL," +
+                        COLUMN_TIMESTAMP + " INTEGER NOT NULL," +
+                        COLUMN_CAPTION + " TEXT," +
+                        "FOREIGN KEY(" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID + ")," +
+                        "FOREIGN KEY(" + COLUMN_IMAGE_ID + ") REFERENCES Images(" + COLUMN_IMAGE_ID + ")"
                 +")"
         );
 
         //Create a Table for Comments
         DB.execSQL(
                 "CREATE TABLE Comments (" +
-                        "CommentID INTEGER PRIMARY KEY," +
-                        "AuthorID INTEGER NOT NULL," +
-                        "ScrapbookID INTEGER NOT NULL," +
-                        "CommentText TEXT NOT NULL," +
-                        "Timestamp INTEGER NOT NULL," +
-                        "FOREIGN KEY(ScrapbookID) REFERENCES Scrapbooks(ScrapbookID)," +
-                        "FOREIGN KEY(AuthorID) REFERENCES Users(UserID)"
+                        COLUMN_COMMENT_ID + " INTEGER PRIMARY KEY, " +
+                        COLUMN_USER_ID + " INTEGER NOT NULL, " +
+                        COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL, " +
+                        COLUMN_COMMENT_TEXT + " TEXT NOT NULL, " +
+                        COLUMN_TIMESTAMP + " INTEGER NOT NULL, " +
+                        COLUMN_PARENT_COMMENT_ID + " INTEGER, " +
+                        "FOREIGN KEY(" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID + ")," +
+                        "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES Users(" + COLUMN_USER_ID + ")"
                 +")"
         );
 
         //Create a Table for Groups
         DB.execSQL(
                 "CREATE TABLE Groups (" +
-                        "GroupID INTEGER PRIMARY KEY," +
-                        "ImageID INTEGER NOT NULL," +
-                        "GroupName TEXT NOT NULL," +
-                        "FOREIGN KEY(ImageID) REFERENCES Images(ImageID)"
+                        COLUMN_GROUP_ID + " INTEGER PRIMARY KEY," +
+                        COLUMN_IMAGE_ID + " INTEGER NOT NULL," +
+                        COLUMN_GROUP_NAME + " TEXT NOT NULL," +
+                        "FOREIGN KEY(" + COLUMN_IMAGE_ID + ") REFERENCES Images(" + COLUMN_IMAGE_ID + ")"
                 +")"
         );
 
         //Create a Table for Associations between Groups and Users
         DB.execSQL(
                 "CREATE TABLE UserGroups (" +
-                        "GroupID INTEGER NOT NULL," +
-                        "UserID INTEGER NOT NULL," +
-                        "FOREIGN KEY(GroupID) REFERENCES Groups(GroupID)," +
-                        "FOREIGN KEY(UserID) REFERENCES Users(UserID)"
+                        COLUMN_GROUP_ID + " INTEGER NOT NULL," +
+                        COLUMN_USER_ID + " INTEGER NOT NULL," +
+                        "FOREIGN KEY(" + COLUMN_GROUP_ID + ") REFERENCES Groups(" + COLUMN_GROUP_ID + ")," +
+                        "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES Users(" + COLUMN_USER_ID + ")"
                 +")"
         );
 
-        //Create a Table for parent-child associations of Comments
-        DB.execSQL(
-                "CREATE TABLE ParentChildComments (" +
-                        "ParentCommentID INTEGER NOT NULL," +
-                        "ChildCommentID INTEGER NOT NULL," +
-                        "FOREIGN KEY(ParentCommentID) REFERENCES Comments(CommentID)," +
-                        "FOREIGN KEY(ChildCommentID) REFERENCES Comments(CommentID)"
-                +")"
-        );
     }
 
     @Override

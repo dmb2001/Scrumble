@@ -12,6 +12,7 @@ import com.app.scrumble.model.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -70,6 +71,10 @@ public abstract class BaseFragment extends Fragment {
 
     protected final boolean isSafe(){
         return !isRemoving() && (getActivity() != null) && !isDetached() && isAdded() && getView() != null;
+    }
+
+    protected final long newUUID(){
+        return UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     }
 
     public abstract String name();

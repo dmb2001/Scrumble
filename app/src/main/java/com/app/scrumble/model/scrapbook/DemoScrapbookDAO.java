@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.app.scrumble.model.CustomDatabaseOpenHelper.*;
+
 
 
 //TODO for Tikhon: When Robbie finishes implementing UserDAO, update corresponding functions in DemoScrapbookDAO
@@ -34,7 +36,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     }
 
     private Comment queryCommentByID(long id) {
-        Cursor c = database.rawQuery("SELECT * FROM Comments WHERE CommentID=?",new String[]{Long.toString(id)});
+        Cursor c = database.rawQuery("SELECT * FROM Comments WHERE " + COLUMN_COMMENT_ID + " =?",new String[]{Long.toString(id)});
 
         if (c.getCount() == 0) {
             return null;
@@ -49,7 +51,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         User author = userDAO.queryUserByID(c.getLong(1));
 
         //Now query the ParentChildComments Table for any children of this comment (recursively)
-        Cursor c2 = database.rawQuery("SELECT * FROM ParentChildComments WHERE ParentCommentID=?",new String[]{Long.toString(id)});
+        Cursor c2 = database.rawQuery("SELECT * FROM ParentChildComments WHERE " + COLUMN_PARENT_COMMENT_ID + " =?",new String[]{Long.toString(id)});
         if (c2.getCount() == 0) {
             //If there are no child comments, return the comment with the constructor without children
              return new Comment(id,timeStamp,commentText,author);
@@ -61,7 +63,6 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             }
             return new Comment(id,timeStamp,commentText,author,childrenComments);
         }
-
     }
 
     @Override
@@ -77,38 +78,59 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         }
 
         //Get the author by using the UserDAO implementation to query a User by ID
-        User author = userDAO.queryUserByID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_USER_ID)));
+        User author = userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID)));
 
         //Get the likes from the result
-        long likes = c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LIKES));
+        long likes = c.getLong(c.getColumnIndex(COLUMN_LIKES));
 
         //Get the title, description and timestamp of the Scrapbook from the result
-        String title = c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TITLE));
-        String description = c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_DESCRIPTION));
-        long timeStamp = c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TIMESTAMP));
+        String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
+        String description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
+        long timeStamp = c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP));
 
         //Get the location from the latitude and longitude columns of the result
-        Location location = new Location(c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LONGITUDE)));
+        Location location = new Location(c.getDouble(c.getColumnIndex(COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(COLUMN_LONGITUDE)));
 
         //Close the Cursor
         c.close();
 
         //Get the Comments
-        List<Comment> comments = new ArrayList<>();
-
-        //Go through every comment in the database with this scrapbook's id as its ID, and use the helper function to
-        //add the comment to the list of comments of the scrapbook - if the comment exists
-        Cursor c2 = database.rawQuery("SELECT CommentID FROM Comments WHERE ScrapbookID=?",new String[]{Long.toString(id)});
-        while (c2.moveToNext()) {
-            Comment nextComment = queryCommentByID(c2.getLong(0));
-            if (nextComment != null) {
-                comments.add(nextComment);
-            }
-        }
+        List<Comment> comments = queryScrapbookComments(id, null);
 
         //Return the built scrapbook
         return builder.withID(id).withOwner(author).withTitle(title).withDescription(description)
                 .withTimeStamp(timeStamp).withLocation(location).withComments(comments).build();
+    }
+
+    private List<Comment> queryScrapbookComments(long scrapbookID, Comment parentComment){
+        Cursor c;
+        if(parentComment == null){
+            c = database.rawQuery("SELECT * FROM Comments WHERE " + COLUMN_SCRAPBOOK_ID + "=? AND " + COLUMN_PARENT_COMMENT_ID + " IS NULL ORDER BY " + COLUMN_TIMESTAMP + " DESC",new String[]{Long.toString(scrapbookID)});
+        }else{
+            c = database.rawQuery("SELECT * FROM Comments WHERE " + COLUMN_SCRAPBOOK_ID + "=? AND " + COLUMN_PARENT_COMMENT_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC",new String[]{Long.toString(scrapbookID), Long.toString(parentComment.getId())});
+        }
+
+        Cursor c2 = database.rawQuery("SELECT * FROM Comments", new String[]{});
+        c2.moveToFirst();
+        Log.d("DEBUGGING", "SCRAPBOOK ID IN TABLE: " + c2.getString(c.getColumnIndex(COLUMN_SCRAPBOOK_ID)));
+
+        if(c.getCount() > 0){
+            Log.d("DEBUGGING", "there are: " + c.getCount() + " records");
+            List<Comment> comments = new ArrayList<>();
+            while(c.moveToNext()){
+                Comment comment = new Comment(c.getLong(c.getColumnIndex(COLUMN_COMMENT_ID)), c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP)), c.getString(c.getColumnIndex(COLUMN_COMMENT_TEXT)), userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID))));
+                List<Comment> childComments = queryScrapbookComments(scrapbookID, comment);
+                if(childComments != null){
+                    comment.addChildren(childComments);
+                }
+                comments.add(comment);
+            }
+            return comments;
+        }else{
+            Log.d("DEBUGGING", "there are comment no records matching this query!");
+            return null;
+        }
+
     }
 
     @Override
@@ -123,16 +145,17 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         }else{
 //            c.moveToFirst();
             while (c.moveToNext()){
-                Location location = new Location(c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_LONGITUDE)));
+                Location location = new Location(c.getDouble(c.getColumnIndex(COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(COLUMN_LONGITUDE)));
                 Log.d("DEBUGGING", "distance from stored Scrapbook: " + Location.distanceBetween(start, location));
                 if(Location.distanceBetween(start, location) <= maxDistance){
                     result.add(
                             new ScrapBookBuilder()
-                                    .withID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_SCRAPBOOK_ID)))
-                                    .withOwner(userDAO.queryUserByID(c.getLong(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_USER_ID))))
+                                    .withID(c.getLong(c.getColumnIndex(COLUMN_SCRAPBOOK_ID)))
+                                    .withOwner(userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID))))
                                     .withLocation(location)
-                                    .withTitle(c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_TITLE)))
-                                    .withDescription(c.getString(c.getColumnIndex(CustomDatabaseOpenHelper.COLUMN_DESCRIPTION)))
+                                    .withTitle(c.getString(c.getColumnIndex(COLUMN_TITLE)))
+                                    .withDescription(c.getString(c.getColumnIndex(COLUMN_DESCRIPTION)))
+                                    .withComments(queryScrapbookComments(c.getColumnIndex(COLUMN_SCRAPBOOK_ID), null))
                                     .build()
                     );
                 }
@@ -192,13 +215,19 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     }
 
     @Override
-    public void createComment(Comment comment, long scrapbookID) {
+    public void createComment(Comment comment, long scrapbookID, Long parentCommentID) {
         ContentValues commentValues = new ContentValues();
-        commentValues.put("CommentID",comment.getID());
-        commentValues.put("AuthorID",comment.getAuthor().getId());
-        commentValues.put("ScrapbookID",scrapbookID);
-        commentValues.put("CommentText",comment.getContent());
-        commentValues.put("Timestamp",comment.getTimeStamp());
-        database.insert("Comments",null,commentValues);
+        commentValues.put(COLUMN_COMMENT_ID,comment.getID());
+        commentValues.put(COLUMN_USER_ID,comment.getAuthor().getId());
+        commentValues.put(COLUMN_SCRAPBOOK_ID,scrapbookID);
+        commentValues.put(COLUMN_COMMENT_TEXT,comment.getContent());
+        commentValues.put(COLUMN_TIMESTAMP,comment.getTimeStamp());
+        commentValues.put(COLUMN_PARENT_COMMENT_ID, parentCommentID);
+        long result = database.insert("Comments",null,commentValues);
+        if(result < 0){
+            Log.d("DEBUGGING", "Error inserting comment!");
+        }else{
+            Log.d("DEBUGGING", "comment inserted at: " + result);
+        }
     }
 }

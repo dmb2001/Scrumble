@@ -27,10 +27,10 @@ public class Scrapbook {
     private String description = NO_DESCRIPTION;
     private User owner;
     private Location location;
-    private Set<String> tags = new HashSet<>();
-    private Map<Reaction, Integer> reactions = new HashMap<>();
-    private List<Entry> entries = new ArrayList<>();
-    private List<Comment> comments = new ArrayList<>();
+    private Set<String> tags;
+    private Map<Reaction, Integer> reactions;
+    private List<Entry> entries;
+    private List<Comment> comments;
 
     private long timeStamp;
 
@@ -70,15 +70,15 @@ public class Scrapbook {
     }
 
     public int getCommentCount(){
-        return comments.size();
+        return comments == null ? 0 : comments.size();
     }
 
     public int getTagCount(){
-        return tags.size();
+        return tags == null ? 0 : tags.size();
     }
 
     public int getReactionCount(){
-        return reactions.size();
+        return reactions == null ? 0 : reactions.size();
     }
 
     public String getTitle() {
@@ -99,9 +99,11 @@ public class Scrapbook {
 
     public long getLastUpdate(){
         long mostRecentUpdate = NEVER_UPDATED;
-        for (Entry entry : entries){
-            if(entry.getTimeStamp() > mostRecentUpdate){
-                mostRecentUpdate = entry.getTimeStamp();
+        if(entries != null){
+            for (Entry entry : entries){
+                if(entry.getTimeStamp() > mostRecentUpdate){
+                    mostRecentUpdate = entry.getTimeStamp();
+                }
             }
         }
         return mostRecentUpdate;
@@ -140,9 +142,9 @@ public class Scrapbook {
             return this;
         }
 
-        public ScrapBookBuilder withLikes(int likeys){
-            Objects.requireNonNull(likeys);
-            this.scrapbook.likes = likeys;
+        public ScrapBookBuilder withLikes(int likes){
+            Objects.requireNonNull(likes);
+            this.scrapbook.likes = likes;
             return this;
         }
 
@@ -183,7 +185,6 @@ public class Scrapbook {
         }
 
         public ScrapBookBuilder withComments(List<Comment> comments){
-            Objects.requireNonNull(comments);
             this.scrapbook.comments = comments;
             return this;
         }

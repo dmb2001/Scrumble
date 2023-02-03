@@ -113,9 +113,14 @@ public class ScrapBookFragment extends BaseFragment {
         }else{
             dateField.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
         }
+        tagsField.setText("");
         tagsField.append("Tags:");
-        for(String tag : scrapbook.getTags()){
-            tagsField.append(" " + tag + ",");
+        if(scrapbook.getTags() != null){
+            for(String tag : scrapbook.getTags()){
+                tagsField.append(" " + tag + ",");
+            }
+        }else{
+            tagsField.append(" none");
         }
         profilePicture.setImageResource(R.drawable.image_user_pp_3);
     }

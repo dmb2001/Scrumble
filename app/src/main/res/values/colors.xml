@@ -12,5 +12,6 @@
     <color name="tint_3">#4B3A76</color>
 
     <color name="overlay_medium">#73000000</color>
+    <color name="comment_guide_colour">#939598</color>
 
 </resources>
