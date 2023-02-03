@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVis
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -53,13 +54,19 @@ public class NewSubmissionFragment extends BaseFragment{
     private EditText titleField;
     private EditText descriptionField;
 
+    private Group captionEditingControls;
+    private EditText captionInputField;
+
     private RecyclerView memoryCarousel;
     private LayoutManager layoutManager;
     private MemoryCarouselAdapter adapter;
     private List<UserSelection> userSelections;
+    private UserSelection editing;
 
     private ImageButton addTagButton;
     private TextView tagsList;
+
+    private Button confirmCaptionButton;
 
     private int tagCount = 0;
 
@@ -116,6 +123,14 @@ public class NewSubmissionFragment extends BaseFragment{
                                         @Override
                                         public void run() {
                                             if(isSafe()){
+                                                List<Entry> entries = null;
+                                                if(userSelections != null){
+                                                    entries = new ArrayList<>();
+                                                    for (UserSelection userSelection : userSelections){
+                                                        entries.add(userSelection.entry);
+                                                    }
+                                                }
+                                                Log.d("DEBUGGING", "The user made: " + userSelections.size() + "selections");
                                                 Scrapbook scrapbook =
                                                         new ScrapBookBuilder()
                                                                 .withID(uniqueID)
@@ -123,6 +138,7 @@ public class NewSubmissionFragment extends BaseFragment{
                                                                 .withDescription(descriptionField.getText().toString())
                                                                 .withLocation(getLocation())
                                                                 .withOwner(getCurrentUser()).withTimeStamp(System.currentTimeMillis())
+                                                                .withEntries(entries)
                                                                 .build();
 
                                                 getScrapBookDAO().createScrapbook(scrapbook);
@@ -162,6 +178,22 @@ public class NewSubmissionFragment extends BaseFragment{
                     }
                 }
         );
+
+        captionInputField = parentLayout.findViewById(R.id.caption_edit_field);
+        confirmCaptionButton = parentLayout.findViewById(R.id.button_confirm_caption);
+        confirmCaptionButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(editing != null){
+                            captionEditingControls.setVisibility(View.INVISIBLE);
+                            editing.entry.setCaption(captionInputField.getText().toString());
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+        );
+        captionEditingControls = parentLayout.findViewById(R.id.caption_editing_controls);
 
         titleField = parentLayout.findViewById(R.id.input_title);
         descriptionField = parentLayout.findViewById(R.id.input_description);
@@ -236,6 +268,16 @@ public class NewSubmissionFragment extends BaseFragment{
                     .format(DecodeFormat.PREFER_RGB_565)
                     .into(holder.thumbnail);
             holder.caption.setText(selection.entry.getCaption() == null ? "tap to add a caption" : selection.entry.getCaption());
+            holder.parent.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(captionEditingControls.getVisibility() == View.INVISIBLE){
+                        captionEditingControls.setVisibility(View.VISIBLE);
+                        editing = userSelections.get(position);
+                        captionInputField.setText(editing.entry.getCaption());
+                    }
+                }
+            });
         }
 
         @Override
@@ -247,11 +289,13 @@ public class NewSubmissionFragment extends BaseFragment{
 
     private class MemoryViewHolder extends ViewHolder{
 
+        private View parent;
         private ImageView thumbnail;
         private TextView caption;
 
         public MemoryViewHolder(@NonNull View itemView) {
             super(itemView);
+            parent = itemView.findViewById(R.id.item);
             thumbnail = itemView.findViewById(R.id.memory_thumbnail);
             caption = itemView.findViewById(R.id.caption);
         }

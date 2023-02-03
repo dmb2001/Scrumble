@@ -2,6 +2,7 @@ package com.app.scrumble;
 
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,8 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import androidx.recyclerview.widget.SnapHelper;
 
+import com.app.scrumble.model.scrapbook.Entry;
 import com.app.scrumble.model.scrapbook.Scrapbook;
 
 public class ScrapBookFragment extends BaseFragment {
@@ -28,6 +36,10 @@ public class ScrapBookFragment extends BaseFragment {
     private ImageView profilePicture;
 
     private Scrapbook scrapbook;
+
+    LayoutManager layoutManager;
+    RecyclerView carousel;
+
 
     public static ScrapBookFragment newInstance(long scrapbook) {
 
@@ -48,17 +60,6 @@ public class ScrapBookFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View parentLayout = LayoutInflater.from(getContext()).inflate(R.layout.fragment_scrapbook, container, false);
 
-//        Scrapbook scrapbook = getScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
-//
-//        RecyclerView carousel = parentLayout.findViewById(R.id.image_carousel);
-//        LayoutManager layoutManager =
-//                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-//        carousel.setLayoutManager(layoutManager);
-//        carousel.setHasFixedSize(true);
-//        SnapHelper snapHelper = new PagerSnapHelper();
-//        snapHelper.attachToRecyclerView(carousel);
-//        carousel.setAdapter(new CarouselAdapter(scrapbook));
-//
         titleField = parentLayout.findViewById(R.id.title);
         usernameField = parentLayout.findViewById(R.id.user_name);
         dateField = parentLayout.findViewById(R.id.date);
@@ -75,6 +76,7 @@ public class ScrapBookFragment extends BaseFragment {
         );
         tagsField = parentLayout.findViewById(R.id.tags);
         description = parentLayout.findViewById(R.id.description);
+        carousel = parentLayout.findViewById(R.id.image_carousel);
         return parentLayout;
     }
 
@@ -88,6 +90,7 @@ public class ScrapBookFragment extends BaseFragment {
                     public void run() {
                         if(isSafe()){
                             scrapbook = getScrapBookDAO().queryScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+                            Log.d("DEBUGGING", "the scrapbook has: " + (scrapbook.getEntries() == null ? 0 : scrapbook.getEntries().size()) + " entries");
                             runOnUIThread(
                                     new Runnable() {
                                         @Override
@@ -123,6 +126,15 @@ public class ScrapBookFragment extends BaseFragment {
             tagsField.append(" none");
         }
         profilePicture.setImageResource(R.drawable.image_user_pp_3);
+        if (layoutManager == null){
+            layoutManager =
+                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            carousel.setLayoutManager(layoutManager);
+            carousel.setHasFixedSize(true);
+            SnapHelper snapHelper = new PagerSnapHelper();
+            snapHelper.attachToRecyclerView(carousel);
+            carousel.setAdapter(new CarouselAdapter(scrapbook));
+        }
     }
 
     @Override
@@ -131,46 +143,41 @@ public class ScrapBookFragment extends BaseFragment {
     }
 
 
-//    private class CarouselAdapter extends Adapter<CarouselItemViewHolder>{
-//
-//        private Scrapbook scrapbook;
-//
-//        private CarouselAdapter(Scrapbook scrapbook) {
-//            this.scrapbook = scrapbook;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public CarouselItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            return new CarouselItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.scrapbook_carousel_item, parent, false));
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull CarouselItemViewHolder holder, int position) {
-//            Entry entry = scrapbook.getEntries().get(position);
-//            Glide
-//                    .with(getContext())
-//                    .load(entry.getImageResource())
-//                    .centerCrop()
-//                    .format(DecodeFormat.PREFER_RGB_565)
-//                    .into(holder.image);
-//
-//            holder.image.setOnClickListener(
-//                    new OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            showAsMainContent(
-//                                    EntryFragment.newInstance(scrapbook.getID(), scrapbook.getEntries().get(position).getID()), true);
-//                        }
-//                    }
-//            );
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return scrapbook.getEntries().size();
-//        }
-//    }
+    private class CarouselAdapter extends Adapter<CarouselItemViewHolder> {
+
+        private Scrapbook scrapbook;
+
+        private CarouselAdapter(Scrapbook scrapbook) {
+            this.scrapbook = scrapbook;
+        }
+
+        @NonNull
+        @Override
+        public CarouselItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new CarouselItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.scrapbook_carousel_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CarouselItemViewHolder holder, int position) {
+            Entry entry = scrapbook.getEntries().get(position);
+            holder.image.setImageResource(R.color.cardview_dark_background);
+
+            holder.image.setOnClickListener(
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            showAsMainContent(
+                                    EntryFragment.newInstance(scrapbook.getID(), scrapbook.getEntries().get(position).getID()), true);
+                        }
+                    }
+            );
+        }
+
+        @Override
+        public int getItemCount() {
+            return scrapbook.getEntries() == null ? 0 : scrapbook.getEntries().size();
+        }
+    }
 
     private static class CarouselItemViewHolder extends ViewHolder{
 

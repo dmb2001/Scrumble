@@ -179,7 +179,6 @@ public class Scrapbook {
         }
 
         public ScrapBookBuilder withEntries(List<Entry> entries){
-            Objects.requireNonNull(entries);
             this.scrapbook.entries = entries;
             return this;
         }

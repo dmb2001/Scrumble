@@ -136,6 +136,34 @@
             android:text="submit"
             android:layout_marginTop="12dp"/>
 
+        <Button
+            android:id="@+id/button_confirm_caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="done"/>
+
+        <EditText
+            android:id="@+id/caption_edit_field"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="10dp"
+            android:hint="Add your caption here"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/button_confirm_caption"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@android:color/white"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/caption_editing_controls"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="button_confirm_caption,caption_edit_field"
+            android:visibility="invisible"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

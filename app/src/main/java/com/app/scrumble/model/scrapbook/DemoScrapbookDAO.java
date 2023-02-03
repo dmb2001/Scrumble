@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.app.scrumble.model.CustomDatabaseOpenHelper;
 import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
@@ -99,7 +98,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
 
         //Return the built scrapbook
         return builder.withID(id).withOwner(author).withTitle(title).withDescription(description)
-                .withTimeStamp(timeStamp).withLocation(location).withComments(comments).build();
+                .withTimeStamp(timeStamp).withLocation(location).withEntries(queryEntriesByScrapBookID(id)).withComments(comments).build();
     }
 
     private List<Comment> queryScrapbookComments(long scrapbookID, Comment parentComment){
@@ -109,10 +108,6 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         }else{
             c = database.rawQuery("SELECT * FROM Comments WHERE " + COLUMN_SCRAPBOOK_ID + "=? AND " + COLUMN_PARENT_COMMENT_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC",new String[]{Long.toString(scrapbookID), Long.toString(parentComment.getId())});
         }
-
-        Cursor c2 = database.rawQuery("SELECT * FROM Comments", new String[]{});
-        c2.moveToFirst();
-        Log.d("DEBUGGING", "SCRAPBOOK ID IN TABLE: " + c2.getString(c.getColumnIndex(COLUMN_SCRAPBOOK_ID)));
 
         if(c.getCount() > 0){
             Log.d("DEBUGGING", "there are: " + c.getCount() + " records");
@@ -131,6 +126,21 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             return null;
         }
 
+    }
+
+    private List<Entry> queryEntriesByScrapBookID(long scrapbookID){
+        Cursor c = database.rawQuery("SELECT * FROM Entries WHERE " + COLUMN_SCRAPBOOK_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC", new String[]{Long.toString(scrapbookID)});
+        if(c.getCount() == 0){
+            return null;
+        }else{
+            Log.d("DEBUGGING", "cursor has " + c.getCount() + " entries");
+            List<Entry> memories = new ArrayList<>();
+            while (c.moveToNext()){
+                Entry memory = new Entry(c.getLong(c.getColumnIndex(COLUMN_ENTRY_ID)), c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP)), c.getString(c.getColumnIndex(COLUMN_CAPTION)));
+                memories.add(memory);
+            }
+            return memories;
+        }
     }
 
     @Override
@@ -155,6 +165,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
                                     .withLocation(location)
                                     .withTitle(c.getString(c.getColumnIndex(COLUMN_TITLE)))
                                     .withDescription(c.getString(c.getColumnIndex(COLUMN_DESCRIPTION)))
+                                    .withEntries(queryEntriesByScrapBookID(c.getLong(c.getColumnIndex(COLUMN_SCRAPBOOK_ID))))
                                     .withComments(queryScrapbookComments(c.getColumnIndex(COLUMN_SCRAPBOOK_ID), null))
                                     .build()
                     );
@@ -196,7 +207,12 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         scrapbookValues.put("Timestamp",scrapbook.getTimestamp());
         scrapbookValues.put("Latitude",scrapbook.getLocation().getLatitude());
         scrapbookValues.put("Longitude",scrapbook.getLocation().getLongitude());
-        database.insert("Scrapbooks",null,scrapbookValues);
+        long insertedAt = database.insert("Scrapbooks",null,scrapbookValues);
+        if(insertedAt != -1 && scrapbook.getEntries() != null){
+            for (Entry entry : scrapbook.getEntries()){
+                createEntry(entry, scrapbook.getID());
+            }
+        }
     }
 
     @Override
@@ -207,11 +223,16 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     @Override
     public void createEntry(Entry entry, long scrapbookID) {
         ContentValues entryValues = new ContentValues();
-        entryValues.put("ScrapbookID",scrapbookID);
-        entryValues.put("EntryID",entry.getID());
-        entryValues.put("Timestamp",entry.getTimeStamp());
-        entryValues.put("Caption",entry.getCaption());
-        database.insert("Entries",null,entryValues);
+        entryValues.put(COLUMN_SCRAPBOOK_ID,scrapbookID);
+        entryValues.put(COLUMN_ENTRY_ID,entry.getID());
+        entryValues.put(COLUMN_TIMESTAMP,entry.getTimeStamp());
+        entryValues.put(COLUMN_CAPTION,entry.getCaption());
+        long result = database.insert("Entries",null,entryValues);
+        if(result < 0){
+            Log.d("DEBUGGING", "Error inserting comment!");
+        }else{
+            Log.d("DEBUGGING", "comment inserted at: " + result);
+        }
     }
 
     @Override

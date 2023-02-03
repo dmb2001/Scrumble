@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.app.scrumble.model.scrapbook.Entry;
+import com.app.scrumble.model.scrapbook.Scrapbook;
+
 
 public class EntryFragment extends BaseFragment{
 
@@ -17,8 +20,9 @@ public class EntryFragment extends BaseFragment{
     private static final String KEY_ENTRY_ID = "KEY_ENTRY_ID";
 
     private ImageView entryImage;
-
     private TextView imageCaption;
+
+    private Entry entry;
 
     public static EntryFragment newInstance(long ScrapBookID, long entryID) {
         Bundle args = new Bundle();
@@ -33,19 +37,45 @@ public class EntryFragment extends BaseFragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View parentLayout = inflater.inflate(R.layout.fragment_entry, container, false);
-//        entryImage = parentLayout.findViewById(R.id.entry_image);
-//        imageCaption = parentLayout.findViewById(R.id.entry_caption);
-//        Entry entry = getScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID)).getEntryByID(getArguments().getLong(KEY_ENTRY_ID));
+        entryImage = parentLayout.findViewById(R.id.entry_image);
+        imageCaption = parentLayout.findViewById(R.id.entry_caption);
 //
-//        entryImage.setImageResource(entry.getImageResource());
-//        imageCaption.setText(entry.getCaption());
         return parentLayout;
+    }
+
+    private void onEntryQueried(Entry entry){
+        this.entry = entry;
+        imageCaption.setText(entry.getCaption());
+        entryImage.setImageResource(R.color.cardview_dark_background);
     }
 
     @Override
     public void onResume() {
         hideNavigationBar();
         super.onResume();
+        if(entry == null){
+            runInBackground(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Scrapbook scrapbook = getScrapBookDAO().queryScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+                            if(scrapbook != null){
+                                Entry entry = scrapbook.getEntryByID(getArguments().getLong(KEY_ENTRY_ID));
+                                if(entry != null){
+                                    runOnUIThread(
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    onEntryQueried(entry);
+                                                }
+                                            }
+                                    );
+                                }
+                            }
+                        }
+                    }
+            );
+        }
     }
 
     @Override

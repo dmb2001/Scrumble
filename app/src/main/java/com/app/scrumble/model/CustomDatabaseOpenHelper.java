@@ -88,7 +88,7 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                 "CREATE TABLE Entries (" +
                         COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL," +
                         COLUMN_ENTRY_ID + " INTEGER PRIMARY KEY," +
-                        COLUMN_IMAGE_ID + " INTEGER NOT NULL," +
+                        COLUMN_IMAGE_ID + " INTEGER," +
                         COLUMN_TIMESTAMP + " INTEGER NOT NULL," +
                         COLUMN_CAPTION + " TEXT," +
                         "FOREIGN KEY(" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID + ")," +
