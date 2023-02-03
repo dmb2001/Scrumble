@@ -68,7 +68,7 @@ public class ScrapBookFragment extends BaseFragment {
                     @Override
                     public void onClick(View view) {
                         showAsMainContent(
-                                ProfileFragment.newInstance(scrapbook.getOwner().getUsername()), true
+                                ProfileFragment.newInstance(scrapbook.getOwner().getId()), true
                         );
                     }
                 }

@@ -64,27 +64,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         return fragment;
     }
 
-//    private BitmapDescriptor bitmapFromVector(int vectorResId) {
-//// below line is use to generate a drawable.
-//        Drawable vectorDrawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), vectorResId);
-////      below line is use to set bounds to our vector drawable.
-//        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-//
-////       below line is use to create a bitmap for our
-////      drawable which we have added.
-//        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-//
-////      below line is use to add bitmap in our canvas.
-//        Canvas canvas = new Canvas(bitmap);
-//
-////      below line is use to draw our
-////      vector drawable in canvas.
-//        vectorDrawable.draw(canvas);
-//
-////      after generating our bitmap we are returning our bitmap.
-//        return BitmapDescriptorFactory.fromBitmap(bitmap);
-//    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,6 +115,17 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                 }
             }
         });
+        ImageButton profileButton = parentLayout.findViewById(R.id.button_nav_profile);
+        profileButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(getCurrentUser() != null){
+                            showAsMainContent(ProfileFragment.newInstance(getCurrentUser().getId()), true);
+                        }
+                    }
+                }
+        );
         return parentLayout;
     }
 
