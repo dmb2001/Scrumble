@@ -61,10 +61,21 @@ public abstract class BaseFragment extends Fragment {
         ((MainActivity)getActivity()).hideNavigationBar();
     }
 
+    /**
+     * Runs the provided {@link Runnable} on a background thread. Use this method whenever there may be work to be done that would block the UI thread.
+     * For example, disk I/O or network activity would block the UI thread and impact the user experience, so those tasks should be run in the background.
+     * Note that on the Android platform, you should never update the UI thread from a background thread or the application wil crash. Once the background work is done, call {@link #runOnUIThread(Runnable)}
+     * to update the UI.
+     * @param runnable A {@link Runnable} containing the code to be executed on a background thread.
+     */
     protected void runInBackground(Runnable runnable){
         backgroundExecutor.execute(runnable);
     }
 
+    /**
+     * Used to run code on the UI thread.
+     * @param runnable The code to be executed on the UI thread
+     */
     protected void runOnUIThread(Runnable runnable){
         new Handler(Looper.getMainLooper()).post(runnable);
     }
