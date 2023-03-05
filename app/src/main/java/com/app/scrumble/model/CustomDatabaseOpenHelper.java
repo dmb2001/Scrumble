@@ -36,6 +36,8 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_GROUP_ID = "GroupID";
     public static final String COLUMN_GROUP_NAME = "GroupName";
 
+    public static final String COLUMN_GROUP_OWNER_ID = "GroupOwnerID";
+
     public CustomDatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -44,8 +46,7 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase DB) {
 
         //Create a Table for Users
-        //Made the User Type be 0 by default(meaning a regular user) - assume 1 and 2 can be group moderators
-        //and admins respectively.
+        //Made the User Type be 0 by default(meaning a regular user) - assume 1 is an admin
         //The password is just a var char. OBVIOUSLY, in later implementations, we'll have a hash or something instead.
         DB.execSQL(
                 "CREATE TABLE Users (" +
@@ -116,7 +117,9 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         COLUMN_GROUP_ID + " INTEGER PRIMARY KEY," +
                         COLUMN_IMAGE_ID + " INTEGER NOT NULL," +
                         COLUMN_GROUP_NAME + " TEXT NOT NULL," +
-                        "FOREIGN KEY(" + COLUMN_IMAGE_ID + ") REFERENCES Images(" + COLUMN_IMAGE_ID + ")"
+                        COLUMN_GROUP_OWNER_ID +" INTEGER NOT NULL," +
+                        "FOREIGN KEY(" + COLUMN_IMAGE_ID + ") REFERENCES Images(" + COLUMN_IMAGE_ID + ")," +
+                        "FOREIGN KEY(" + COLUMN_GROUP_OWNER_ID +") REFERENCES Users(" + COLUMN_USER_ID +")"
                 +")"
         );
 
@@ -127,6 +130,16 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         COLUMN_USER_ID + " INTEGER NOT NULL," +
                         "FOREIGN KEY(" + COLUMN_GROUP_ID + ") REFERENCES Groups(" + COLUMN_GROUP_ID + ")," +
                         "FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES Users(" + COLUMN_USER_ID + ")"
+                +")"
+        );
+
+        //Create a Table for Associations between Scrapbooks and Groups
+        DB.execSQL(
+                "CREATE TABLE ScrapbookGroups (" +
+                        COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL," +
+                        COLUMN_GROUP_ID + " INTEGER NOT NULL," +
+                        "FOREIGN KEY (" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID +")," +
+                        "FOREIGN KEY (" + COLUMN_GROUP_ID + ") REFERENCES Groups(" + COLUMN_GROUP_ID + "),"
                 +")"
         );
 

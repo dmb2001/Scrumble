@@ -1,8 +1,7 @@
-package com.app.scrumble.model.scrapbook;
+package com.app.scrumble.model.group.scrapbook;
 
 import com.app.scrumble.model.user.User;
 
-import java.util.List;
 import java.util.Set;
 
 public interface ScrapbookDAO {

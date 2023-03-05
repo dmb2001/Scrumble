@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 
 public class ScrapbookNavigationFragment extends BaseFragment{
 

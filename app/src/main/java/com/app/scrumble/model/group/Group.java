@@ -1,6 +1,6 @@
 package com.app.scrumble.model.group;
 
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.user.User;
 
 import java.util.ArrayList;
@@ -15,6 +15,10 @@ public final class Group {
 
     public Group(long groupID, String name){
         this.groupID = groupID;
+        this.name = name;
+    }
+
+    public Group(String name) {
         this.name = name;
     }
 

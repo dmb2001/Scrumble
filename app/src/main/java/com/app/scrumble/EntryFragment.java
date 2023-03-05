@@ -10,8 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.app.scrumble.model.scrapbook.Entry;
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Entry;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 
 
 public class EntryFragment extends BaseFragment{

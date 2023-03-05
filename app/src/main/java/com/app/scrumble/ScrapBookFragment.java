@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.app.scrumble.model.scrapbook.Entry;
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Entry;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 
 public class ScrapBookFragment extends BaseFragment {
 

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.model.scrapbook.Comment;
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Comment;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 
 import java.util.ArrayList;
 import java.util.List;

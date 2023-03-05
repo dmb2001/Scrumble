@@ -17,7 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
@@ -73,7 +73,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                if(userLocation == null || com.app.scrumble.model.scrapbook.Location.distanceBetween(convert(newLocation), convert(userLocation)) > 3){
+                if(userLocation == null || com.app.scrumble.model.group.scrapbook.Location.distanceBetween(convert(newLocation), convert(userLocation)) > 3){
                     userLocation = newLocation;
                     if(map != null && followUser){
                         centerMapOnSelf(true);
@@ -83,8 +83,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         });
     }
 
-    private com.app.scrumble.model.scrapbook.Location convert(LatLng latLng){
-        return new com.app.scrumble.model.scrapbook.Location(latLng.latitude, latLng.longitude);
+    private com.app.scrumble.model.group.scrapbook.Location convert(LatLng latLng){
+        return new com.app.scrumble.model.group.scrapbook.Location(latLng.latitude, latLng.longitude);
     }
 
     @Nullable
@@ -109,7 +109,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
             @Override
             public void onClick(View view) {
                 if(map != null && userLocation != null){
-                    showAsMainContent(NewSubmissionFragment.newInstance(new com.app.scrumble.model.scrapbook.Location(userLocation.latitude, userLocation.longitude)), true);
+                    showAsMainContent(NewSubmissionFragment.newInstance(new com.app.scrumble.model.group.scrapbook.Location(userLocation.latitude, userLocation.longitude)), true);
                 }else{
                     Toast.makeText(getContext(), "Hang on, determining your location...", Toast.LENGTH_SHORT).show();
                 }
@@ -250,7 +250,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     @Override
                     public void run() {
                         if(isSafe() && userLocation != null){
-                            Set<Scrapbook> result = getScrapBookDAO().queryScrapbooksByLocation(new com.app.scrumble.model.scrapbook.Location(userLocation.latitude, userLocation.longitude), Math.min(radius, 10000));
+                            Set<Scrapbook> result = getScrapBookDAO().queryScrapbooksByLocation(new com.app.scrumble.model.group.scrapbook.Location(userLocation.latitude, userLocation.longitude), Math.min(radius, 10000));
                             if(result != null && result.size() > 0){
                                 runOnUIThread(
                                         new Runnable() {
@@ -282,7 +282,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
 
     @Override
     public void onMapLongClick(@NonNull LatLng latLng) {
-        showAsMainContent(NewSubmissionFragment.newInstance(new com.app.scrumble.model.scrapbook.Location(latLng.latitude, latLng.longitude)), true);
+        showAsMainContent(NewSubmissionFragment.newInstance(new com.app.scrumble.model.group.scrapbook.Location(latLng.latitude, latLng.longitude)), true);
     }
 
     @Override

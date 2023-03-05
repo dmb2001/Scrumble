@@ -1,11 +1,10 @@
-package com.app.scrumble.model.scrapbook;
+package com.app.scrumble.model.group.scrapbook;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
@@ -159,7 +158,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
                 Log.d("DEBUGGING", "distance from stored Scrapbook: " + Location.distanceBetween(start, location));
                 if(Location.distanceBetween(start, location) <= maxDistance){
                     result.add(
-                            new ScrapBookBuilder()
+                            new Scrapbook.ScrapBookBuilder()
                                     .withID(c.getLong(c.getColumnIndex(COLUMN_SCRAPBOOK_ID)))
                                     .withOwner(userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID))))
                                     .withLocation(location)

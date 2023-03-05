@@ -4,8 +4,10 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.app.scrumble.model.CustomDatabaseOpenHelper;
-import com.app.scrumble.model.scrapbook.DemoScrapbookDAO;
-import com.app.scrumble.model.scrapbook.ScrapbookDAO;
+import com.app.scrumble.model.group.GroupDAO;
+import com.app.scrumble.model.group.GroupDAOImplementation;
+import com.app.scrumble.model.group.scrapbook.DemoScrapbookDAO;
+import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.UserDAO;
 import com.app.scrumble.model.user.UserDAOImplementation;
 
@@ -24,6 +26,10 @@ public class Scrumble extends Application {
 
     public final ScrapbookDAO getScrapBookDAO(){
         return new DemoScrapbookDAO(getDatabase(), getUserDAO());
+    }
+
+    public final GroupDAO getGroupDAO(){
+        return new GroupDAOImplementation();
     }
 
 }

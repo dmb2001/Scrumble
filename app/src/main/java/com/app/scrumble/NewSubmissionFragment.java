@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,10 +28,10 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.model.scrapbook.Entry;
-import com.app.scrumble.model.scrapbook.Location;
-import com.app.scrumble.model.scrapbook.Scrapbook;
-import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
+import com.app.scrumble.model.group.scrapbook.Entry;
+import com.app.scrumble.model.group.scrapbook.Location;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 

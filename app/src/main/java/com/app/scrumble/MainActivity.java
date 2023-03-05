@@ -22,22 +22,19 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-import com.app.scrumble.model.scrapbook.Comment;
-import com.app.scrumble.model.scrapbook.Entry;
+import com.app.scrumble.model.group.GroupDAO;
+import com.app.scrumble.model.group.scrapbook.Comment;
 import com.app.scrumble.model.group.Group;
-import com.app.scrumble.model.scrapbook.Location;
-import com.app.scrumble.model.scrapbook.Scrapbook;
-import com.app.scrumble.model.scrapbook.ScrapbookDAO;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -158,6 +155,10 @@ public class MainActivity extends AppCompatActivity {
 
     public final ScrapbookDAO getScrapBookDAO(){
         return ((Scrumble)getApplication()).getScrapBookDAO();
+    }
+
+    public final GroupDAO getGroupDAO() {
+        return ((Scrumble)getApplication().getGroupDAO());
     }
 
     @Override
