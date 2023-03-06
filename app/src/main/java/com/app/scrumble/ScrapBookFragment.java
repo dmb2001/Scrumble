@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.app.scrumble.model.group.scrapbook.Entry;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Tag;
 
 public class ScrapBookFragment extends BaseFragment {
 
@@ -119,8 +120,8 @@ public class ScrapBookFragment extends BaseFragment {
         tagsField.setText("");
         tagsField.append("Tags:");
         if(scrapbook.getTags() != null){
-            for(String tag : scrapbook.getTags()){
-                tagsField.append(" " + tag + ",");
+            for(Tag tag : scrapbook.getTags()){
+                tagsField.append(" " + tag.getName() + ",");
             }
         }else{
             tagsField.append(" none");

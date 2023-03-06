@@ -24,7 +24,7 @@ public class Scrapbook {
     private String description = NO_DESCRIPTION;
     private User owner;
     private Location location;
-    private Set<String> tags;
+    private Set<Tag> tags;
     private Map<Reaction, Integer> reactions;
     private List<Entry> entries;
     private List<Comment> comments;
@@ -86,7 +86,7 @@ public class Scrapbook {
         return description;
     }
 
-    public Set<String> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
@@ -163,7 +163,7 @@ public class Scrapbook {
             return this;
         }
 
-        public ScrapBookBuilder withTags(Set<String> tags){
+        public ScrapBookBuilder withTags(Set<Tag> tags){
             Objects.requireNonNull(tags);
             this.scrapbook.tags = tags;
             return this;
