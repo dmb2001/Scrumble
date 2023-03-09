@@ -1,7 +1,10 @@
 package com.app.scrumble;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -209,9 +212,24 @@ public class NewSubmissionFragment extends BaseFragment{
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        int newTagNumber = ++tagCount;
-                        String string = "Example tag " + newTagNumber + ", ";
-                        tagsList.append(string);
+                        AlertDialog.Builder tagDialog = new AlertDialog.Builder(getContext());
+                        tagDialog.setTitle("Add Tag");
+
+                        final EditText tagInput = new EditText(getContext());
+                        tagInput.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
+                        tagDialog.setView(tagInput);
+
+                        tagDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String tagText = tagInput.getText().toString();
+                                Tag newTag = new Tag(tagText);
+                                if (!tagText.isEmpty()) { /*TODO: Add check for identical tag*/
+                                    tagsList.append(tagText + ", ");
+                                    tags.add(newTag);
+                                }
+                            }
+                        });
                     }
                 }
         );
