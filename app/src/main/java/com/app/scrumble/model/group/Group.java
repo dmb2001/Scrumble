@@ -8,7 +8,7 @@ import java.util.List;
 
 public final class Group {
 
-    private final long groupID;
+    private long groupID;
     private String name;
     private List<User> members = new ArrayList<>();
     private List<Scrapbook> recentPosts = new ArrayList<>();
@@ -20,6 +20,12 @@ public final class Group {
 
     public Group(String name) {
         this.name = name;
+    }
+
+    public Group(long groupID, String name, List<User> members) {
+        this.groupID = groupID;
+        this.name = name;
+        this.members = members;
     }
 
     public List<User> getMembers(){
@@ -34,4 +40,5 @@ public final class Group {
         return recentPosts;
     }
 
+    public long getID() { return this.groupID; }
 }

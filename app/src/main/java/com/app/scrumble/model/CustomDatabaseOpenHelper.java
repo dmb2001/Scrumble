@@ -139,8 +139,8 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL," +
                         COLUMN_GROUP_ID + " INTEGER NOT NULL," +
                         "FOREIGN KEY (" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID +")," +
-                        "FOREIGN KEY (" + COLUMN_GROUP_ID + ") REFERENCES Groups(" + COLUMN_GROUP_ID + "),"
-                +")"
+                        "FOREIGN KEY (" + COLUMN_GROUP_ID + ") REFERENCES Groups(" + COLUMN_GROUP_ID + ")"
+                        +")"
         );
 
     }

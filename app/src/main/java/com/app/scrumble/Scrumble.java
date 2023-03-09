@@ -29,7 +29,7 @@ public class Scrumble extends Application {
     }
 
     public final GroupDAO getGroupDAO(){
-        return new GroupDAOImplementation();
+        return new GroupDAOImplementation(getDatabase(), getScrapBookDAO(), getUserDAO());
     }
 
 }

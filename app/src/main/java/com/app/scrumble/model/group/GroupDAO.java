@@ -1,5 +1,8 @@
 package com.app.scrumble.model.group;
 
+import com.app.scrumble.model.user.User;
+
+import java.util.List;
 import java.util.Set;
 
 public interface GroupDAO {
@@ -15,4 +18,9 @@ public interface GroupDAO {
 
     Set<Group> queryGroupsContainingScrapbookID(long scrapbookID);
 
+    //Abstract method from getting a group from an ID
+    Group queryGroupByID(long groupID);
+
+    //Abstract method to get the users in a group
+    List<User> queryUsersFollowingGroup(long groupID);
 }
