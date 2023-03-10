@@ -136,7 +136,8 @@ public class NewSubmissionFragment extends BaseFragment{
                                                         entries.add(userSelection.entry);
                                                     }
                                                 }
-                                                Log.d("DEBUGGING", "The user made: " + userSelections.size() + "selections");
+                                                int debugSize = userSelections == null ? 0 : userSelections.size();
+                                                Log.d("DEBUGGING", "The user made: " + debugSize + "selections");
                                                 Scrapbook scrapbook =
                                                         new ScrapBookBuilder()
                                                                 .withID(uniqueID)
