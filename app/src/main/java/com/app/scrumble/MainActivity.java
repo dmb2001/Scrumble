@@ -24,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.app.scrumble.model.group.scrapbook.Comment;
 import com.app.scrumble.model.group.GroupDAO;
 import com.app.scrumble.model.group.scrapbook.Comment;
 import com.app.scrumble.model.group.Group;

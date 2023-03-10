@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
 
+import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.group.GroupDAO;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
