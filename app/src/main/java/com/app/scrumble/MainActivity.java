@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public final GroupDAO getGroupDAO() {
-        return ((Scrumble)getApplication().getGroupDAO());
+        return ((Scrumble)getApplication()).getGroupDAO();
     }
 
     @Override

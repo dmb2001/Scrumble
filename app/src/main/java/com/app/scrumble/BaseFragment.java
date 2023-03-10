@@ -46,7 +46,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected final GroupDAO getGroupDAO() {
-        return ((MainActivity)getActivity().getGroupDAO());
+        return ((MainActivity)getActivity()).getGroupDAO();
     }
 
     protected void hideKeyBoard(View view){
