@@ -31,11 +31,11 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.model.group.scrapbook.Entry;
-import com.app.scrumble.model.group.scrapbook.Location;
-import com.app.scrumble.model.group.scrapbook.Scrapbook;
-import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
-import com.app.scrumble.model.group.scrapbook.Tag;
+import com.app.scrumble.model.scrapbook.Entry;
+import com.app.scrumble.model.scrapbook.Location;
+import com.app.scrumble.model.scrapbook.Scrapbook;
+import com.app.scrumble.model.scrapbook.Scrapbook.ScrapBookBuilder;
+import com.app.scrumble.model.scrapbook.Tag;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
