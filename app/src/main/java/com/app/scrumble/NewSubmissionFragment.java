@@ -1,6 +1,7 @@
 package com.app.scrumble;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -211,14 +212,15 @@ public class NewSubmissionFragment extends BaseFragment{
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        AlertDialog.Builder tagDialog = new AlertDialog.Builder(getContext());
-                        tagDialog.setTitle("Add Tag");
+                        AlertDialog.Builder tagDialogBuilder = new AlertDialog.Builder(getContext());
+                        tagDialogBuilder.setCancelable(true);
+                        tagDialogBuilder.setTitle("Add Tag");
 
                         final EditText tagInput = new EditText(getContext());
                         tagInput.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
-                        tagDialog.setView(tagInput);
+                        tagDialogBuilder.setView(tagInput);
 
-                        tagDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        tagDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String tagText = tagInput.getText().toString();
@@ -229,6 +231,16 @@ public class NewSubmissionFragment extends BaseFragment{
                                 }
                             }
                         });
+
+                        tagDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+                        Dialog tagDialog = tagDialogBuilder.create();
+                        tagDialog.show();
                     }
                 }
         );
