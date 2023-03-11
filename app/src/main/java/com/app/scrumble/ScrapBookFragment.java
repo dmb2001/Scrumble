@@ -121,7 +121,9 @@ public class ScrapBookFragment extends BaseFragment {
         tagsField.append("Tags:");
         if(scrapbook.getTags() != null){
             for(Tag tag : scrapbook.getTags()){
-                tagsField.append(" " + tag.getName() + ",");
+                if (!tag.isHidden()) {
+                    tagsField.append(" " + tag.getName() + ",");
+                }
             }
         }else{
             tagsField.append(" none");
