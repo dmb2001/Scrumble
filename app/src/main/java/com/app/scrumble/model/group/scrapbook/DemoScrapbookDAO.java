@@ -212,6 +212,11 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
                 createEntry(entry, scrapbook.getID());
             }
         }
+        if(insertedAt != -1 && scrapbook.getTags() != null) {
+            for (Tag tag : scrapbook.getTags()) {
+                createTag(tag, scrapbook.getID());
+            }
+        }
     }
 
     @Override
@@ -232,6 +237,20 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         }else{
             Log.d("DEBUGGING", "comment inserted at: " + result);
         }
+    }
+
+    private void createTag(Tag tag, long scrapbookID) {
+        // insert tag into Tags table
+        ContentValues tagValues = new ContentValues();
+        tagValues.put(COLUMN_TAG_NAME,tag.getName());
+        tagValues.put(COLUMN_TAG_HIDDEN, (tag.isHidden() ? 1 : 0)); // true = 1, false = 0
+        long result = database.insert("Tags",null,tagValues);
+
+        // insert tag and scrapbook into ScrapbookTags
+        ContentValues scTagValues = new ContentValues();
+        scTagValues.put(COLUMN_SCRAPBOOK_ID, scrapbookID);
+        tagValues.put(COLUMN_TAG_NAME,tag.getName());
+        long result2 = database.insert("ScrapbookTags",null,scTagValues);
     }
 
     @Override

@@ -18,4 +18,5 @@ public class Tag {
     public String getName() {
         return name;
     }
+    public boolean isHidden() {return hidden;}
 }
