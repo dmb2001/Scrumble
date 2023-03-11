@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +22,7 @@ import com.bumptech.glide.load.DecodeFormat;
 
 public class GroupFeedFragment extends BaseFragment{
 
+    private Button createGroupButton;
     public static GroupFeedFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -36,6 +39,15 @@ public class GroupFeedFragment extends BaseFragment{
 //        RecyclerView list = parentLayout.findViewById(R.id.group_item_list);
 //        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 //        list.setAdapter(new FeedAdapter());
+
+        createGroupButton = parentLayout.findViewById(R.id.button_create_group);
+        createGroupButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAsMainContent(NewGroupFragment.newInstance(), true);
+            }
+        });
+
         return parentLayout;
     }
 

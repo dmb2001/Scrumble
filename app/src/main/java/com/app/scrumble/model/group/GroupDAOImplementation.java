@@ -47,6 +47,7 @@ public class GroupDAOImplementation implements GroupDAO{
         values.put("GroupID", group.getID());
         values.put("GroupName", group.getName());
         values.put("GroupOwnerID", group.getMembers().get(0).getId()); //I assume that, when a group is created, its first member is the
+        values.put("ImageID",0);
         //"owner", since, by being the first member, it implies they're the first member.
         //For the time being, I also ignored ImageID, since that'll be implemented later, I presume
 

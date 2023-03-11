@@ -41,4 +41,8 @@ public final class Group {
     }
 
     public long getID() { return this.groupID; }
+
+    public void addMember(User member) {
+        members.add(member);
+    }
 }

@@ -21,6 +21,8 @@ public class MainNavigation extends BaseFragment{
     private ImageButton mapButton;
     private ImageButton feedButton;
 
+    private ImageButton groupsButton;
+
     public static MainNavigation newInstance() {
         Bundle args = new Bundle();
         MainNavigation fragment = new MainNavigation();
@@ -35,6 +37,7 @@ public class MainNavigation extends BaseFragment{
 
         mapButton = parentLayout.findViewById(R.id.button_map);
         feedButton = parentLayout.findViewById(R.id.button_feed);
+        groupsButton = parentLayout.findViewById(R.id.button_groups);
 
         mapButton.setOnClickListener(
                 new OnClickListener() {
@@ -54,7 +57,7 @@ public class MainNavigation extends BaseFragment{
                 }
         );
 
-        parentLayout.findViewById(R.id.button_groups).setOnClickListener(
+        groupsButton.setOnClickListener(
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
