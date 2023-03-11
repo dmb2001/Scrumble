@@ -160,7 +160,7 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
         //Create a Table for Tags
         DB.execSQL(
                 "CREATE TABLE Tags (" +
-                        COLUMN_TAG_NAME + " TEXT PRIMARY KEY," +
+                        COLUMN_TAG_NAME + " TEXT PRIMARY KEY NOT NULL," +
                         COLUMN_TAG_HIDDEN + " INTEGER " +
                 ")"
         );

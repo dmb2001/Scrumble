@@ -149,6 +149,8 @@ public class NewSubmissionFragment extends BaseFragment{
                                                                 .withEntries(entries)
                                                                 .build();
 
+                                                Log.d("DEBUGGING:", "tags made: " + scrapbook.getTags().toString());
+
                                                 getScrapBookDAO().createScrapbook(scrapbook);
                                                 runOnUIThread(new Runnable() {
                                                     @Override

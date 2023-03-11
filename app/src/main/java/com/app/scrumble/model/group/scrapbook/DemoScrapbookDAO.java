@@ -89,6 +89,9 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         //Get the location from the latitude and longitude columns of the result
         Location location = new Location(c.getDouble(c.getColumnIndex(COLUMN_LATITUDE)),c.getDouble(c.getColumnIndex(COLUMN_LONGITUDE)));
 
+        //Get the tags by querying ScrapbookTags and Tags
+        Set<Tag> tags = queryScrapbookTagsByScrapbookID(id);
+
         //Close the Cursor
         c.close();
 
@@ -97,7 +100,30 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
 
         //Return the built scrapbook
         return builder.withID(id).withOwner(author).withTitle(title).withDescription(description)
-                .withTimeStamp(timeStamp).withLocation(location).withEntries(queryEntriesByScrapBookID(id)).withComments(comments).build();
+                .withTimeStamp(timeStamp).withLocation(location).withTags(tags).withEntries(queryEntriesByScrapBookID(id)).withComments(comments).build();
+    }
+
+    private Set<Tag> queryScrapbookTagsByScrapbookID(long scrapbookID) {
+        Cursor c = database.rawQuery(
+                "SELECT Tags." + COLUMN_TAG_NAME + ", Tags." + COLUMN_TAG_HIDDEN + " FROM Tags, ScrapbookTags " +
+                        "WHERE " + COLUMN_SCRAPBOOK_ID + " = ? " +
+                        "AND Tags." + COLUMN_TAG_NAME + " = ScrapbookTags." + COLUMN_TAG_NAME
+        , new String[]{Long.toString(scrapbookID)});
+
+        if(c.getCount() > 0) {
+            Set<Tag> tags = new HashSet<>();
+            while (c.moveToNext()) {
+                String tname = c.getString(c.getColumnIndex(COLUMN_TAG_NAME));
+                boolean thidden = c.getInt(c.getColumnIndex(COLUMN_TAG_HIDDEN)) == 1;
+                Tag tag = new Tag(tname, thidden);
+                tags.add(tag);
+            }
+
+            return tags;
+        } else {
+            Log.d("DEBUGGING", "no tag match found! returning empty set");
+            return new HashSet<Tag>();
+        }
     }
 
     private List<Comment> queryScrapbookComments(long scrapbookID, Comment parentComment){
@@ -249,7 +275,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         // insert tag and scrapbook into ScrapbookTags
         ContentValues scTagValues = new ContentValues();
         scTagValues.put(COLUMN_SCRAPBOOK_ID, scrapbookID);
-        tagValues.put(COLUMN_TAG_NAME,tag.getName());
+        scTagValues.put(COLUMN_TAG_NAME,tag.getName());
         long result2 = database.insert("ScrapbookTags",null,scTagValues);
     }
 
