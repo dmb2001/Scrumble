@@ -36,6 +36,9 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_GROUP_ID = "GroupID";
     public static final String COLUMN_GROUP_NAME = "GroupName";
 
+    public static final String COLUMN_TAG_NAME = "TagName";
+    public static final String COLUMN_TAG_HIDDEN = "Hidden";
+
     public static final String COLUMN_GROUP_OWNER_ID = "GroupOwnerID";
 
     public CustomDatabaseOpenHelper(Context context) {
@@ -143,6 +146,24 @@ public class CustomDatabaseOpenHelper extends SQLiteOpenHelper {
                         +")"
         );
 
+        //Create a Table to list the Tags a Scrapbook contains
+        DB.execSQL(
+                "CREATE TABLE ScrapbookTags (" +
+                        COLUMN_SCRAPBOOK_ID + " INTEGER NOT NULL," +
+                        COLUMN_TAG_NAME + " TEXT NOT NULL," +
+                        "FOREIGN KEY(" + COLUMN_SCRAPBOOK_ID + ") REFERENCES Scrapbooks(" + COLUMN_SCRAPBOOK_ID + ")," +
+                        "FOREIGN KEY(" + COLUMN_TAG_NAME + ") REFERENCES Tags(" + COLUMN_TAG_NAME + ")," +
+                        "PRIMARY KEY(" + COLUMN_SCRAPBOOK_ID + ", " + COLUMN_TAG_NAME + ")" +
+                ")"
+        );
+
+        //Create a Table for Tags
+        DB.execSQL(
+                "CREATE TABLE Tags (" +
+                        COLUMN_TAG_NAME + " TEXT PRIMARY KEY," +
+                        COLUMN_TAG_HIDDEN + " INTEGER " +
+                ")"
+        );
     }
 
     @Override
