@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
@@ -84,6 +85,11 @@ public class GroupDAOImplementation implements GroupDAO{
     }
 
     @Override
+    public void leaveGroup(long userID, long groupID) {
+        database.delete("UserGroups","userID=? AND groupID=?", new String[]{Long.toString(userID),Long.toString(groupID)});
+    }
+
+    @Override
     public Set<Group> queryGroupsContainingScrapbookID(long scrapbookID) {
         //Run an SQLite query, looking for all columns for groups whose ID aligns with a "ScrapbookGroups" entry
         Cursor cursor = database.rawQuery(
@@ -156,7 +162,7 @@ public class GroupDAOImplementation implements GroupDAO{
 
     @Override
     public List<User> queryUsersFollowingGroup(long groupID) {
-        //Run an SQLite query, looking for all rows in the User table whose ID is associated with the group ID
+        //Run an SQLite query, looking for all IDs in the User table whose ID is associated with the group ID
         //in the UserGroups table
         Cursor cursor = database.rawQuery(
                 "SELECT UserID FROM UserGroups" +
@@ -180,5 +186,66 @@ public class GroupDAOImplementation implements GroupDAO{
         }
 
         return groupMembers;
+    }
+
+    @Override
+    public List<Scrapbook> queryScrapbooksInGroup(long groupID) {
+        //Run an SQLite query, looking for all Scrapbook IDs associated with the group ID
+        //in the ScrapbookGroups table
+        Cursor cursor = database.rawQuery(
+                "SELECT ScrapbookID FROM Scrapbooks,ScrapbookGroups" +
+                        " WHERE GroupID = ?" +
+                        " AND Scrapbooks.ScrapbookID = ScrapbookGroups.ScrapbookID" +
+                        " ORDER BY Timestamp DESC;"
+                , new String[]{Long.toString(groupID)}
+        );
+
+        //If no scrapbooks are associated with the group, return null
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+
+        //Next, use the ScrapbookDAO to get Scrapbooks from the group, based on their ids
+
+        cursor.moveToFirst();
+
+        List<Scrapbook> result = new ArrayList<Scrapbook>();
+
+        while (cursor.moveToNext()) {
+            Scrapbook scrapbook = scrapbookDAO.queryScrapbookByID(getLongFromCursor(cursor,"ScrapbookID"));
+            result.add(scrapbook);
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<Group> queryUserGroups(long userID) {
+        //Run an SQLite query, looking for all Group IDs associated with the User ID
+        //in the UserGroups table
+        Cursor cursor = database.rawQuery(
+                "SELECT GroupID FROM UserGroups,Groups" +
+                        " WHERE UserId = ?" +
+                        " AND UserGroups.GroupID = Groups.GroupID" +
+                        " ORDER BY GroupName ASC;"
+                , new String[]{Long.toString(userID)}
+        );
+
+        //If the user follows no groups, return null
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+
+        List<Group> result = new ArrayList<Group>();
+
+        cursor.moveToFirst();
+
+        //Using the queryGroupByID method, get all the groups based on the GroupIDs acquired, and add them to the result list
+        while (cursor.moveToNext()) {
+            Group group = queryGroupByID(getLongFromCursor(cursor,"GroupID"));
+            result.add(group);
+        }
+
+        return result;
     }
 }

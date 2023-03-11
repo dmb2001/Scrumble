@@ -1,5 +1,6 @@
 package com.app.scrumble.model.group;
 
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.user.User;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface GroupDAO {
     //Abstract method for associating a Scrapbook with a Group
     void postToGroup(long scrapbookID, long groupID);
 
+    //Abstract method for a user to leave a group
+    void leaveGroup(long userID, long groupID);
+
     Set<Group> queryGroupsContainingScrapbookID(long scrapbookID);
 
     //Abstract method from getting a group from an ID
@@ -23,4 +27,11 @@ public interface GroupDAO {
 
     //Abstract method to get the users in a group
     List<User> queryUsersFollowingGroup(long groupID);
+
+    //Abstract method to get all scrapbooks in a group
+    List<Scrapbook> queryScrapbooksInGroup(long groupID);
+
+    //Abstract method to get all groups followed by a user
+    List<Group> queryUserGroups(long userID);
+
 }
