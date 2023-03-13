@@ -11,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ import com.app.scrumble.model.group.scrapbook.Tag;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +58,8 @@ public class NewSubmissionFragment extends BaseFragment{
 
     private Button addMemoryButton;
     private Button submitButton;
+
+    private Button addToGroupButton;
 
     private EditText titleField;
     private EditText descriptionField;
@@ -79,6 +84,8 @@ public class NewSubmissionFragment extends BaseFragment{
     private final long uniqueID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
 
     private Location location;
+
+    private ArrayList<com.app.scrumble.model.group.Group> selectedGroups = new ArrayList<com.app.scrumble.model.group.Group>();
 
     public static NewSubmissionFragment newInstance(Location location) {
         Bundle args = new Bundle();
@@ -129,6 +136,7 @@ public class NewSubmissionFragment extends BaseFragment{
                                         @Override
                                         public void run() {
                                             if(isSafe()){
+
                                                 List<Entry> entries = null;
                                                 if(userSelections != null){
                                                     entries = new ArrayList<>();
@@ -152,6 +160,12 @@ public class NewSubmissionFragment extends BaseFragment{
                                                 Log.d("DEBUGGING:", "tags made: " + scrapbook.getTags().toString());
 
                                                 getScrapBookDAO().createScrapbook(scrapbook);
+
+                                                //Go through all selected groups, and use the groupDAO to associate the scrapbook with them
+                                                for (int i = 0; i < selectedGroups.size(); i++) {
+                                                    getGroupDAO().postToGroup(uniqueID,selectedGroups.get(0).getID());
+                                                }
+
                                                 runOnUIThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -244,6 +258,54 @@ public class NewSubmissionFragment extends BaseFragment{
 
                         Dialog tagDialog = tagDialogBuilder.create();
                         tagDialog.show();
+                    }
+                }
+        );
+
+        addToGroupButton = parentLayout.findViewById(R.id.button_add_to_group);
+        addToGroupButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Log.d("DEBUGGING:", "Creating Group Addition popup!");
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                        ArrayList<com.app.scrumble.model.group.Group> userGroups = (ArrayList<com.app.scrumble.model.group.Group>) getGroupDAO().queryUserGroups(getCurrentUser().getId());
+                        String[] groupNames = new String[userGroups.size()];
+
+                        //Go through every group and put its name into the groupNames array
+                        for (int i = 0; i < userGroups.size(); i++) {
+                            groupNames[i] = userGroups.get(i).getName();
+                        }
+
+                        builder.setTitle("Post Scrapbook to Group(s)")
+                                .setMultiChoiceItems(groupNames, null, new DialogInterface.OnMultiChoiceClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                                if (b == true) {
+                                                    selectedGroups.add(userGroups.get(i));
+                                                } else {
+                                                    selectedGroups.remove(userGroups.get(i));
+                                                }
+                                            }
+                                        }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        }
+                                )
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        selectedGroups.clear();
+                                    }
+                                });
+
+                        Dialog groupDialog = builder.create();
+                        groupDialog.show();
                     }
                 }
         );

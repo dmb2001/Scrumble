@@ -3,12 +3,14 @@ package com.app.scrumble.model.group;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +38,7 @@ public class GroupDAOImplementation implements GroupDAO{
     public GroupDAOImplementation(SQLiteDatabase database, ScrapbookDAO scrapbookDAO, UserDAO userDAO) {
         this.database = database;
         this.scrapbookDAO = scrapbookDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -47,8 +50,8 @@ public class GroupDAOImplementation implements GroupDAO{
         values.put("GroupID", group.getID());
         values.put("GroupName", group.getName());
         values.put("GroupOwnerID", group.getMembers().get(0).getId()); //I assume that, when a group is created, its first member is the
+        //"owner", since, by being the first member, it implies they're the one who created the group.
         values.put("ImageID",0);
-        //"owner", since, by being the first member, it implies they're the first member.
         //For the time being, I also ignored ImageID, since that'll be implemented later, I presume
 
         //Insert the values into a new row in the Groups table, using the values from the vals
@@ -128,6 +131,7 @@ public class GroupDAOImplementation implements GroupDAO{
 
         //If the cursor has 0 entries, i.e. there's no groups matching this ID, return null
         if (cursor.getCount() == 0) {
+            Log.d("DEBUGGING:", "No group with ID found!");
             return null;
         }
 
@@ -137,10 +141,10 @@ public class GroupDAOImplementation implements GroupDAO{
         ArrayList<User> groupMembers = new ArrayList<User>();
         long groupOwnerID; //Initialize the long of the group owner
 
-        //Otherwise, get the required values from the Cursor
-        cursor.moveToFirst();
+        //Get the required values from the Cursor
         String groupName = getStringFromCursor(cursor, "GroupName");
         groupOwnerID = getLongFromCursor(cursor,"GroupOwnerID");
+        Log.d("DEBUGGING:", "Group Owner: "+Long.toString(groupOwnerID));
         User groupOwner = userDAO.queryUserByID(groupOwnerID);
 
         //Next, get all users following the group
@@ -157,6 +161,7 @@ public class GroupDAOImplementation implements GroupDAO{
         groupMembers.add(0,groupOwner);
 
         //Finally, create a Group instance and return it, using the results acquired
+        Log.d("DEBUGGING:", "Group found!");
         return new Group(groupID,groupName,groupMembers);
 
     }
@@ -181,9 +186,13 @@ public class GroupDAOImplementation implements GroupDAO{
         //Create an Arraylist to hold group members
         List<User> groupMembers = new ArrayList<User>();
 
-        while (cursor.moveToNext()) {
+        while (true) {
             User user = userDAO.queryUserByID(getLongFromCursor(cursor,"UserID"));
             groupMembers.add(user);
+            cursor.moveToNext();
+            if (cursor.isAfterLast()) {
+                break;
+            }
         }
 
         return groupMembers;
@@ -221,11 +230,11 @@ public class GroupDAOImplementation implements GroupDAO{
     }
 
     @Override
-    public List<Group> queryUserGroups(long userID) {
+    public ArrayList<Group> queryUserGroups(long userID) {
         //Run an SQLite query, looking for all Group IDs associated with the User ID
         //in the UserGroups table
         Cursor cursor = database.rawQuery(
-                "SELECT GroupID FROM UserGroups,Groups" +
+                "SELECT Groups.GroupID FROM UserGroups,Groups" +
                         " WHERE UserId = ?" +
                         " AND UserGroups.GroupID = Groups.GroupID" +
                         " ORDER BY GroupName ASC;"
@@ -234,19 +243,28 @@ public class GroupDAOImplementation implements GroupDAO{
 
         //If the user follows no groups, return null
         if (cursor.getCount() == 0) {
+            Log.d("DEBUGGING:", "User follows no groups!");
             return null;
         }
 
-        List<Group> result = new ArrayList<Group>();
+        Log.d("DEBUGGING:", "User does follow "+Integer.toString(cursor.getCount())+" groups!");
+
+        ArrayList<Group> result = new ArrayList<Group>();
 
         cursor.moveToFirst();
 
         //Using the queryGroupByID method, get all the groups based on the GroupIDs acquired, and add them to the result list
-        while (cursor.moveToNext()) {
+        while (true) {
             Group group = queryGroupByID(getLongFromCursor(cursor,"GroupID"));
             result.add(group);
+            Log.d("DEBUGGING:", "Added group "+Long.toString(group.getID())+" to result!");
+            cursor.moveToNext();
+            if (cursor.isAfterLast()) {
+                break;
+            }
         }
 
+        Log.d("DEBUGGING:","Returning result, with "+Integer.toString(result.size())+" groups!");
         return result;
     }
 }

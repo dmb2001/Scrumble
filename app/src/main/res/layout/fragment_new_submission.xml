@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp"
@@ -127,10 +127,17 @@
             android:text="By submitting a scrapbook, you agree to adhere to Scrumble's terms of service agreement"/>
 
         <Button
-            android:id="@+id/button_submit"
+            android:id="@+id/button_add_to_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/submission_notice"
+            android:text="Add Scrapbook to Group(s)" />
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/button_add_to_group"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:text="submit"
@@ -140,29 +147,32 @@
             android:id="@+id/button_confirm_caption"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="done"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="done"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/caption_edit_field"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@android:color/white"
             android:elevation="10dp"
             android:hint="Add your caption here"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/button_confirm_caption"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@android:color/white"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/caption_editing_controls"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:constraint_referenced_ids="button_confirm_caption,caption_edit_field"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            app:constraint_referenced_ids="button_confirm_caption,caption_edit_field" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
