@@ -54,10 +54,15 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             //If there are no child comments, return the comment with the constructor without children
              return new Comment(id,timeStamp,commentText,author);
         } else {
+            c2.moveToFirst();
             //Otherwise, create a list, and recursively call this function on all child comments
             List<Comment> childrenComments = new ArrayList<>();
-            while (c2.moveToNext()) {
+            while (true) {
                 childrenComments.add(queryCommentByID(c2.getLong(1)));
+                c2.moveToNext();
+                if (c2.isAfterLast()) {
+                    break;
+                }
             }
             return new Comment(id,timeStamp,commentText,author,childrenComments);
         }
@@ -71,9 +76,9 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
         //If the number of returned rows is 0, i.e. no Scrapbook with such an ID exists, return null
         if (c.getCount() == 0) {
             return null;
-        }else{
-            c.moveToFirst();
         }
+
+        c.moveToFirst();
 
         //Get the author by using the UserDAO implementation to query a User by ID
         User author = userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID)));
@@ -134,16 +139,22 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             c = database.rawQuery("SELECT * FROM Comments WHERE " + COLUMN_SCRAPBOOK_ID + "=? AND " + COLUMN_PARENT_COMMENT_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC",new String[]{Long.toString(scrapbookID), Long.toString(parentComment.getId())});
         }
 
+        c.moveToFirst();
+
         if(c.getCount() > 0){
             Log.d("DEBUGGING", "there are: " + c.getCount() + " records");
             List<Comment> comments = new ArrayList<>();
-            while(c.moveToNext()){
+            while(true){
                 Comment comment = new Comment(c.getLong(c.getColumnIndex(COLUMN_COMMENT_ID)), c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP)), c.getString(c.getColumnIndex(COLUMN_COMMENT_TEXT)), userDAO.queryUserByID(c.getLong(c.getColumnIndex(COLUMN_USER_ID))));
                 List<Comment> childComments = queryScrapbookComments(scrapbookID, comment);
                 if(childComments != null){
                     comment.addChildren(childComments);
                 }
                 comments.add(comment);
+                c.moveToNext();
+                if (c.isAfterLast()) {
+                    break;
+                }
             }
             return comments;
         }else{
@@ -156,13 +167,19 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     private List<Entry> queryEntriesByScrapBookID(long scrapbookID){
         Cursor c = database.rawQuery("SELECT * FROM Entries WHERE " + COLUMN_SCRAPBOOK_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC", new String[]{Long.toString(scrapbookID)});
         if(c.getCount() == 0){
-            return null;
+            return new ArrayList<Entry>(); //If there are no entries, return an empty ArrayList of Entries
         }else{
             Log.d("DEBUGGING", "cursor has " + c.getCount() + " entries");
             List<Entry> memories = new ArrayList<>();
-            while (c.moveToNext()){
+
+            c.moveToFirst();
+            while (true){
                 Entry memory = new Entry(c.getLong(c.getColumnIndex(COLUMN_ENTRY_ID)), c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP)), c.getString(c.getColumnIndex(COLUMN_CAPTION)));
                 memories.add(memory);
+                c.moveToNext();
+                if (c.isAfterLast()) {
+                    break;
+                }
             }
             return memories;
         }

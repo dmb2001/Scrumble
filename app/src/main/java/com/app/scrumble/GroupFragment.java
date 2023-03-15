@@ -2,6 +2,7 @@ package com.app.scrumble;
 
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,14 +20,23 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.app.scrumble.FeedFragment.FeedItemViewHolder;
+import com.app.scrumble.model.group.Group;
+import com.app.scrumble.model.group.scrapbook.Location;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.app.scrumble.model.user.User;
+
+import java.util.List;
 
 public class GroupFragment extends BaseFragment{
 
-    private static final String KEY_NAME = "KEY_NAME";
+    private static final String GROUP_KEY = "GROUP";
+    private static final String LATITUDE_KEY = "LATITUDE";
+    private static final String LONGITUDE_KEY = "LONGITUDE";
 
-    public static GroupFragment newInstance(String name) {
+    public static GroupFragment newInstance(long groupID) {
         Bundle args = new Bundle();
-        args.putString(KEY_NAME, name);
+        args.putLong(GROUP_KEY, groupID);
+
         GroupFragment fragment = new GroupFragment();
         fragment.setArguments(args);
         return fragment;
@@ -37,101 +47,109 @@ public class GroupFragment extends BaseFragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View parentLayout = inflater.inflate(R.layout.fragment_group, container, false);
 
-//        Group group = getGroupByName(getArguments().getString(KEY_NAME));
-//
-//        ImageView groupProfilePicture = parentLayout.findViewById(R.id.group_profile_picture);
-//        groupProfilePicture.setImageResource(group.getGroupPhotoResourceID());
-//
-//        TextView groupTitle = parentLayout.findViewById(R.id.group_name);
-//        groupTitle.setText(group.getName());
-//
-//        TextView memberCount = parentLayout.findViewById(R.id.member_count);
-//        memberCount.setText(group.getMembers().size() + " members");
-//
-//        TextView membersList = parentLayout.findViewById(R.id.member_list);
-//        membersList.append("Members:");
-//        for(User member : group.getMembers()){
-//            membersList.append(" @" + member.getUsername() + ",");
-//        }
-//
-//        RecyclerView list = parentLayout.findViewById(R.id.scrapbook_feed);
-//        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-//        list.setAdapter(new PostAdapter(group));
+        Group group = getGroupDAO().queryGroupByID(getArguments().getLong(GROUP_KEY));
+        ImageView groupProfilePicture = parentLayout.findViewById(R.id.group_profile_picture);
+
+        Location location = new Location(getArguments().getDouble(LATITUDE_KEY),getArguments().getDouble(LONGITUDE_KEY));
+
+        //groupProfilePicture.setImageResource(group.getGroupPhotoResourceID());
+        TextView groupTitle = parentLayout.findViewById(R.id.group_name);
+        groupTitle.setText(group.getName());
+
+        TextView memberCount = parentLayout.findViewById(R.id.member_count);
+        memberCount.setText(group.getMembers().size() + " members");
+
+        TextView membersList = parentLayout.findViewById(R.id.member_list);
+        membersList.append("Members:");
+        for(User member : group.getMembers()){
+            membersList.append(" @" + member.getUsername() + ",");
+        }
+
+        RecyclerView list = parentLayout.findViewById(R.id.scrapbook_feed);
+        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.setAdapter(new PostAdapter(group));
 
         return parentLayout;
     }
 
-//    private class PostAdapter extends Adapter<GroupFeedItemHolder>{
-//
-//        private Group group;
-//
-//        private PostAdapter(Group group){
-//            this.group = group;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public GroupFeedItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            return new GroupFeedItemHolder(LayoutInflater.from(getContext()).inflate(R.layout.group_feed_post, parent, false));
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull GroupFeedItemHolder holder, int position) {
-//
-//            Scrapbook scrapbook = group.getRecentPosts().get(position);
-//            holder.profilePicture.setImageResource(scrapbook.getOwner().getProfilePictureResourceID());
-//
-//            holder.preview_large.setImageResource(scrapbook.getEntries().get(0).getImageResource());
-//            holder.preview_small.setImageResource(scrapbook.getEntries().get(1).getImageResource());
-//
-//            holder.distance.setText(scrapbook.getLocation().distanceFrom(currentLocation) + " miles away");
-//
-//            holder.username.setText("@" + scrapbook.getOwner().getUsername());
-//            holder.postDate.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
-//
-//            holder.viewMoreOption.setText("+ " + (group.getRecentPosts().get(position).getEntries().size() - 2) + " more");
-//            holder.viewMoreOption.setOnClickListener(
-//                    new OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            showAsMainContent(ScrapBookFragment.newInstance(group.getRecentPosts().get(position).getID()), true);
-//                        }
-//                    }
-//            );
-//
-//            holder.commentsButton.setOnClickListener(
-//                    new OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            showAsMainContent(CommentsFragment.newInstance(), true);
-//                        }
-//                    }
-//            );
-//            holder.likeButton.setOnClickListener(
-//                    new OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Toast.makeText(getContext(), "You have liked " + group.getRecentPosts().get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//            );
-//
-//            holder.reactionButton.setOnClickListener(
-//                    new OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Toast.makeText(getContext(), "You have reacted to " + group.getRecentPosts().get(position).getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//            );
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return group.getRecentPosts() == null ? 0 : group.getRecentPosts().size();
-//        }
-//
-//    }
+    private class PostAdapter extends Adapter<GroupFeedItemHolder>{
+
+        private Group group;
+
+        private List<Scrapbook> groupPosts;
+
+        private PostAdapter(Group group){
+            this.group = group;
+            this.groupPosts = getGroupDAO().queryScrapbooksInGroup(group.getID());
+            if (groupPosts == null || groupPosts.size() == 0) {
+                Log.d("DEBUGGING:","No scrapbooks associated with Group found!");
+            } else if (groupPosts.size() > 0) {
+                Log.d("DEBUGGING:","Found "+Integer.toString(groupPosts.size())+" posts associated with Group!");
+            }
+        }
+
+       @NonNull
+       @Override
+        public GroupFeedItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new GroupFeedItemHolder(LayoutInflater.from(getContext()).inflate(R.layout.group_feed_post, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull GroupFeedItemHolder holder, int position) {
+            Scrapbook scrapbook = groupPosts.get(holder.getAdapterPosition());
+            Log.d("DEBUGGING:","Got Scrapbook ID "+Long.toString(scrapbook.getID())+"!");
+            //holder.profilePicture.setImageResource(scrapbook.getOwner().getProfilePictureResourceID());
+            //holder.preview_large.setImageResource(scrapbook.getEntries().get(0).getImageResource());
+            //holder.preview_small.setImageResource(scrapbook.getEntries().get(1).getImageResource());
+            //holder.distance.setText(scrapbook.getLocation().distanceFrom(currentLocation) + " miles away");
+
+            holder.username.setText("@" + scrapbook.getOwner().getUsername());
+            holder.postDate.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
+
+            //holder.viewMoreOption.setText("+ " + (scrapbook.getEntries().size() - 2) + " more");
+            holder.viewMoreOption.setText("View Scrapbook in Detail");
+            holder.viewMoreOption.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                        public void onClick(View view) {
+                                showAsMainContent(ScrapBookFragment.newInstance(scrapbook.getID()), true);
+                            }
+                        }
+                );
+
+            holder.commentsButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showAsMainContent(CommentsFragment.newInstance(scrapbook.getID()), true);
+                        }
+                    }
+                );
+            holder.likeButton.setOnClickListener(
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getContext(), "You have liked " + scrapbook.getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
+                            }
+                    }
+                );
+
+            holder.reactionButton.setOnClickListener(
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getContext(), "You have reacted to " + scrapbook.getOwner().getUsername() + "'s scrapbook", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+        }
+
+        @Override
+        public int getItemCount() {
+            return groupPosts == null ? 0 : groupPosts.size();
+        }
+
+    }
 
     private static final class GroupFeedItemHolder extends ViewHolder{
 
@@ -153,6 +171,7 @@ public class GroupFragment extends BaseFragment{
 
         public GroupFeedItemHolder(@NonNull View itemView) {
             super(itemView);
+
             this.profilePicture = itemView.findViewById(R.id.profile_picture);
 
             this.preview_large = itemView.findViewById(R.id.image_preview_large);

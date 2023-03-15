@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Entry;
+import com.app.scrumble.model.group.scrapbook.Location;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.Tag;
 
@@ -40,7 +41,6 @@ public class ScrapBookFragment extends BaseFragment {
 
     public static final String NAME = "SCRAP_BOOK";
     private static final String KEY_SCRAPBOOK_ID = "KEY_SCRAPBOOK_ID";
-
     private TextView titleField;
     private TextView usernameField;
     private TextView dateField;
@@ -173,6 +173,8 @@ public class ScrapBookFragment extends BaseFragment {
                     new OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            final Group[] selectedGroup = {null}; //Initialize a variable for a group selected from the list
+
                             //Go through every group and put its name into the groupNames array
                             String[] groupNames = new String[relatedGroups.size()];
 
@@ -186,10 +188,17 @@ public class ScrapBookFragment extends BaseFragment {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                            builder.setTitle("Groups this Scrapbook was Posted to")
+                            builder.setTitle("Press on a Group's Name to see its Information")
                                     .setItems(groupNames, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
+                                                selectedGroup[0] = relatedGroups.get(i);
+                                                Log.d("DEBUGGING:","Pressed on "+selectedGroup[0].getName()+"!");
+                                                showAsMainContent(
+                                                        GroupFragment.newInstance(selectedGroup[0].getID())
+                                                ,true);
+
+
 
                                         }
                                     }).setPositiveButton("OK", new DialogInterface.OnClickListener() {

@@ -207,7 +207,7 @@ public class GroupDAOImplementation implements GroupDAO{
         //Run an SQLite query, looking for all Scrapbook IDs associated with the group ID
         //in the ScrapbookGroups table
         Cursor cursor = database.rawQuery(
-                "SELECT ScrapbookID FROM Scrapbooks,ScrapbookGroups" +
+                "SELECT Scrapbooks.ScrapbookID FROM Scrapbooks,ScrapbookGroups" +
                         " WHERE GroupID = ?" +
                         " AND Scrapbooks.ScrapbookID = ScrapbookGroups.ScrapbookID" +
                         " ORDER BY Timestamp DESC;"
