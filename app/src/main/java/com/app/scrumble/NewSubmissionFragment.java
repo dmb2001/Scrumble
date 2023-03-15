@@ -243,7 +243,7 @@ public class NewSubmissionFragment extends BaseFragment{
                                 String tagText = tagInput.getText().toString();
                                 Tag newTag = new Tag(tagText);
                                 if (!tagText.isEmpty()) { /*TODO: Add check for identical tag*/
-                                    tagsList.append(tagText + ", ");
+                                    if (!tagsList.getText().equals("")) tagsList.append(", " + tagText); else tagsList.append(tagText);
                                     tags.add(newTag);
                                 }
                             }

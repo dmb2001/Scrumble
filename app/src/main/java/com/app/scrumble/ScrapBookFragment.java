@@ -138,16 +138,17 @@ public class ScrapBookFragment extends BaseFragment {
             dateField.setText(DateUtils.getRelativeTimeSpanString(scrapbook.getLastUpdate(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
         }
         tagsField.setText("");
-        tagsField.append("Tags:");
-        if(scrapbook.getTags() != null){
+        if(!scrapbook.getTags().isEmpty()){
             for(Tag tag : scrapbook.getTags()){
                 if (!tag.isHidden()) {
-                    tagsField.append(" " + tag.getName() + ",");
+                    if (!tagsField.getText().equals("")) tagsField.append(", " + tag.getName()); else tagsField.append(tag.getName());
                 }
             }
         }else{
-            tagsField.append(" none");
+            tagsField.setText("none");
         }
+        tagsField.setText("Tags: " + tagsField.getText());
+
         profilePicture.setImageResource(R.drawable.image_user_pp_3);
         if (layoutManager == null){
             layoutManager =
