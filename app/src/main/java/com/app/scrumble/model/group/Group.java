@@ -13,6 +13,8 @@ public final class Group {
     private List<User> members = new ArrayList<>();
     private List<Scrapbook> recentPosts = new ArrayList<>();
 
+    private long groupOwnerID;
+
     public Group(long groupID, String name){
         this.groupID = groupID;
         this.name = name;
@@ -26,6 +28,7 @@ public final class Group {
         this.groupID = groupID;
         this.name = name;
         this.members = members;
+        this.groupOwnerID = members.get(0).getId();
     }
 
     public List<User> getMembers(){
@@ -44,5 +47,27 @@ public final class Group {
 
     public void addMember(User member) {
         members.add(member);
+    }
+
+    public boolean isMember(User user) {
+        for (User groupUser : getMembers()) {
+            if (user.getId() == groupUser.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isMember(long userID) {
+        for (User groupUser : getMembers()) {
+            if (groupUser.getId() == userID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public long getGroupOwnerID() {
+        return groupOwnerID;
     }
 }

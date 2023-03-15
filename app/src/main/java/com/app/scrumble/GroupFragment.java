@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,12 +34,18 @@ public class GroupFragment extends BaseFragment{
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
 
+    private Button joinGroupButton;
+    private Button leaveGroupButton;
+
+    private TextView groupOwnerText;
+
     public static GroupFragment newInstance(long groupID) {
         Bundle args = new Bundle();
         args.putLong(GROUP_KEY, groupID);
 
         GroupFragment fragment = new GroupFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -56,6 +63,10 @@ public class GroupFragment extends BaseFragment{
         TextView groupTitle = parentLayout.findViewById(R.id.group_name);
         groupTitle.setText(group.getName());
 
+        RecyclerView list = parentLayout.findViewById(R.id.scrapbook_feed);
+        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.setAdapter(new PostAdapter(group));
+
         TextView memberCount = parentLayout.findViewById(R.id.member_count);
         memberCount.setText(group.getMembers().size() + " members");
 
@@ -65,9 +76,52 @@ public class GroupFragment extends BaseFragment{
             membersList.append(" @" + member.getUsername() + ",");
         }
 
-        RecyclerView list = parentLayout.findViewById(R.id.scrapbook_feed);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.setAdapter(new PostAdapter(group));
+        //Initialize Buttons and Text for Leaving and Joining a group
+        joinGroupButton = parentLayout.findViewById(R.id.button_join_group);
+        leaveGroupButton = parentLayout.findViewById(R.id.button_leave_group);
+        groupOwnerText = parentLayout.findViewById(R.id.text_owner);
+
+        //If the current user is not the first user in the Group's members(i.e. group owner) and is part of the group,
+        //make the Leaving group button visible
+        if (getCurrentUser().getId() != group.getGroupOwnerID() && group.isMember(getCurrentUser())) {
+            Log.d("DEBUGGING","ID "+Long.toString(getCurrentUser().getId())+" is not same as ID of owner: "
+                    +Long.toString(group.getGroupOwnerID())+", and they are also a member!");
+            joinGroupButton.setVisibility(View.INVISIBLE);
+            leaveGroupButton.setVisibility(View.VISIBLE);
+            groupOwnerText.setVisibility(View.INVISIBLE);
+        } else if (!group.isMember(getCurrentUser())) {
+            //Otherwise, if the current user is not a member of this group, make the Join Group button visible
+            Log.d("DEBUGGING","User not a member, making joining visible!");
+            joinGroupButton.setVisibility(View.VISIBLE);
+            leaveGroupButton.setVisibility(View.INVISIBLE);
+            groupOwnerText.setVisibility(View.INVISIBLE);
+        } else {
+            //Otherwise, hide both buttons and show the user they're the owner - transferring
+            //ownership has not been implemented yet
+            Log.d("DEBUGGING","User the owner!");
+            joinGroupButton.setVisibility(View.INVISIBLE);
+            leaveGroupButton.setVisibility(View.INVISIBLE);
+            groupOwnerText.setVisibility(View.VISIBLE);
+        }
+        //Set onclick listener for joining a group
+        joinGroupButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getGroupDAO().joinGroup(getCurrentUser().getId(),group.getID());
+                getActivity().onBackPressed();
+                Log.d("DEBUGGING", "Joined group!");
+            }
+        });
+
+        //Set onclick listener for leaving a group
+        leaveGroupButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getGroupDAO().leaveGroup(getCurrentUser().getId(),group.getID());
+                getActivity().onBackPressed();
+                Log.d("DEBUGGING", "Left group!");
+            }
+        });
 
         return parentLayout;
     }

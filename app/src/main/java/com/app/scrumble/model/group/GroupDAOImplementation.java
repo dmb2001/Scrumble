@@ -10,11 +10,8 @@ import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class GroupDAOImplementation implements GroupDAO{
 
@@ -109,7 +106,7 @@ public class GroupDAOImplementation implements GroupDAO{
 
         cursor.moveToFirst();
 
-        //Initialize a hashset for all groups
+        //Initialize an arraylist for all groups
         ArrayList<Group> groups = new ArrayList<Group>();
 
         while (true) {
@@ -156,9 +153,9 @@ public class GroupDAOImplementation implements GroupDAO{
 
         //Go through all the group Members, remove the element corresponding to the
         //ID of the owner of the group, and insert the Group Owner into the beginning of the ArrayList
-        for (User user : groupMembers) {
-            if (user.getId() == groupOwnerID) {
-                groupMembers.remove(user);
+        for (int i = 0; i < groupMembers.size(); i++) {
+            if (groupMembers.get(i).getId() == groupOwnerID) {
+                groupMembers.remove(groupMembers.get(i));
             }
         }
 
@@ -166,7 +163,7 @@ public class GroupDAOImplementation implements GroupDAO{
 
         //Finally, create a Group instance and return it, using the results acquired
         Log.d("DEBUGGING:", "Group found!");
-        return new Group(groupID,groupName,groupMembers);
+        return new Group(getLongFromCursor(cursor,"GroupID"),groupName,groupMembers);
 
     }
 
