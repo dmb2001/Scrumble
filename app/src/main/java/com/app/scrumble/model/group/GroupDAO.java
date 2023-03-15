@@ -20,7 +20,7 @@ public interface GroupDAO {
     //Abstract method for a user to leave a group
     void leaveGroup(long userID, long groupID);
 
-    Set<Group> queryGroupsContainingScrapbookID(long scrapbookID);
+    List<Group> queryGroupsContainingScrapbookID(long scrapbookID);
 
     //Abstract method from getting a group from an ID
     Group queryGroupByID(long groupID);

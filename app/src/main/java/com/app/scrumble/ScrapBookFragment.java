@@ -1,5 +1,8 @@
 package com.app.scrumble;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -7,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,9 +26,15 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Entry;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.Tag;
+
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class ScrapBookFragment extends BaseFragment {
 
@@ -37,6 +49,9 @@ public class ScrapBookFragment extends BaseFragment {
     private ImageView profilePicture;
 
     private Scrapbook scrapbook;
+
+    private TextView noGroupText;
+    private Button seeGroupsButton;
 
     LayoutManager layoutManager;
     RecyclerView carousel;
@@ -78,6 +93,11 @@ public class ScrapBookFragment extends BaseFragment {
         tagsField = parentLayout.findViewById(R.id.tags);
         description = parentLayout.findViewById(R.id.description);
         carousel = parentLayout.findViewById(R.id.image_carousel);
+
+        //Get group-related views
+        noGroupText = parentLayout.findViewById(R.id.text_no_groups);
+        seeGroupsButton = parentLayout.findViewById(R.id.button_see_groups);
+
         return parentLayout;
     }
 
@@ -137,6 +157,55 @@ public class ScrapBookFragment extends BaseFragment {
             SnapHelper snapHelper = new PagerSnapHelper();
             snapHelper.attachToRecyclerView(carousel);
             carousel.setAdapter(new CarouselAdapter(scrapbook));
+        }
+
+        //Populate group-related content
+        List<Group> relatedGroups = getGroupDAO().queryGroupsContainingScrapbookID(scrapbook.getID());
+
+        if (relatedGroups == null) {
+            seeGroupsButton.setVisibility(View.INVISIBLE);
+            noGroupText.setVisibility(View.VISIBLE);
+        } else {
+            seeGroupsButton.setVisibility(View.VISIBLE);
+            noGroupText.setVisibility(View.INVISIBLE);
+
+            seeGroupsButton.setOnClickListener(
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //Go through every group and put its name into the groupNames array
+                            String[] groupNames = new String[relatedGroups.size()];
+
+                            for (int i = 0; i < relatedGroups.size(); i++) {
+                                groupNames[i] = relatedGroups.get(i).getName();
+                            }
+
+                            Log.d("DEBUGGING:","Acquired "+Integer.toString(relatedGroups.size())+" Groups!");
+
+                            Log.d("DEBUGGING:", "Creating Scrapbook Groups popup!");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setTitle("Groups this Scrapbook was Posted to")
+                                    .setItems(groupNames, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        }
+                                    }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                }
+                                            }
+                                    );
+
+                            Dialog groupsDialog = builder.create();
+                            groupsDialog.show();
+                        }
+                    }
+            );
+
         }
     }
 

@@ -263,6 +263,17 @@ public class NewSubmissionFragment extends BaseFragment{
         );
 
         addToGroupButton = parentLayout.findViewById(R.id.button_add_to_group);
+
+        List<com.app.scrumble.model.group.Group> userGroups = getGroupDAO().queryUserGroups(getCurrentUser().getId());
+
+        //If the user is not part of any groups(i.e. userGroups == null),
+        //do not show the button for adding the Scrapbook to groups
+        if (userGroups == null) {
+            addToGroupButton.setVisibility(View.INVISIBLE);
+        } else {
+            addToGroupButton.setVisibility(View.VISIBLE);
+        }
+
         addToGroupButton.setOnClickListener(
                 new OnClickListener() {
                     @Override
@@ -272,7 +283,6 @@ public class NewSubmissionFragment extends BaseFragment{
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                        ArrayList<com.app.scrumble.model.group.Group> userGroups = (ArrayList<com.app.scrumble.model.group.Group>) getGroupDAO().queryUserGroups(getCurrentUser().getId());
                         String[] groupNames = new String[userGroups.size()];
 
                         //Go through every group and put its name into the groupNames array

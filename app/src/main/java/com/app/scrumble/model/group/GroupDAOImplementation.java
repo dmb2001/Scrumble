@@ -94,7 +94,7 @@ public class GroupDAOImplementation implements GroupDAO{
     }
 
     @Override
-    public Set<Group> queryGroupsContainingScrapbookID(long scrapbookID) {
+    public ArrayList<Group> queryGroupsContainingScrapbookID(long scrapbookID) {
         //Run an SQLite query, looking for all columns for groups whose ID aligns with a "ScrapbookGroups" entry
         Cursor cursor = database.rawQuery(
                 "SELECT GroupID FROM ScrapbookGroups" +
@@ -110,11 +110,15 @@ public class GroupDAOImplementation implements GroupDAO{
         cursor.moveToFirst();
 
         //Initialize a hashset for all groups
-        Set<Group> groups = new HashSet<Group>();
+        ArrayList<Group> groups = new ArrayList<Group>();
 
-        while (cursor.moveToNext()) {
+        while (true) {
             Group nextGroup = queryGroupByID(getLongFromCursor(cursor,"GroupID"));
             groups.add(nextGroup);
+            cursor.moveToNext();
+            if (cursor.isAfterLast()) {
+                break;
+            }
         }
 
         return groups;
@@ -221,9 +225,13 @@ public class GroupDAOImplementation implements GroupDAO{
 
         List<Scrapbook> result = new ArrayList<Scrapbook>();
 
-        while (cursor.moveToNext()) {
+        while (true) {
             Scrapbook scrapbook = scrapbookDAO.queryScrapbookByID(getLongFromCursor(cursor,"ScrapbookID"));
             result.add(scrapbook);
+            cursor.moveToNext();
+            if (cursor.isAfterLast()) {
+                break;
+            }
         }
 
         return result;

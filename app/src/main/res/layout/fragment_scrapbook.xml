@@ -94,6 +94,26 @@
         android:layout_marginEnd="24dp"
         />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/button_see_groups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="See Groups to which the Scrapbook was Posted"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description" />
+
+    <TextView
+        android:id="@+id/text_no_groups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This Scrapbook was not posted to any groups"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
