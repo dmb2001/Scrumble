@@ -92,6 +92,8 @@ public class CommentsFragment extends BaseFragment{
                     @Override
                     public void run() {
                         if(isSafe()){
+                            Log.d("DEBUGGING", "Reply ID: " + getArguments().getLong(KEY_REPLY_ID));
+                            if (getArguments().getLong(KEY_REPLY_ID) == 0) {};
                             Scrapbook scrapbook = getScrapBookDAO().queryScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
                             runOnUIThread(
                                     new Runnable() {
@@ -218,7 +220,14 @@ public class CommentsFragment extends BaseFragment{
                     }
             );
             childrenButton = itemView.findViewById(R.id.button_children);
-
+            if (childrenButton != null) childrenButton.setOnClickListener(
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            showAsMainContent(CommentsFragment.newReplyInstance(getArguments().getLong(KEY_SCRAPBOOK_ID), comment.getID()), true);
+                        }
+                    }
+            );
 
         }
 
