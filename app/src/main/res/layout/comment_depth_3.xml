@@ -128,7 +128,6 @@
         android:gravity="right|center_vertical"
         android:text="show replies"
         android:textSize="16sp"
-        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@id/start"
         app:layout_constraintTop_toBottomOf="@id/comment_body" />
 

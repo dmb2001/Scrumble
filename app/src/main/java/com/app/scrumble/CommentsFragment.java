@@ -180,6 +180,9 @@ public class CommentsFragment extends BaseFragment{
             holder.comment = comment;
             holder.authorField.setText("@" + comment.getAuthor());
             holder.contentField.setText(comment.getContent());
+            if (comment.getChildren() == null || comment.getChildren().size() == 0) {
+                holder.hideShowChildren();
+            }
         }
 
 
@@ -197,6 +200,7 @@ public class CommentsFragment extends BaseFragment{
         private final TextView authorField;
         private final TextView contentField;
         private final TextView replyButton;
+        private final TextView childrenButton;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -213,6 +217,15 @@ public class CommentsFragment extends BaseFragment{
                         }
                     }
             );
+            childrenButton = itemView.findViewById(R.id.button_children);
+
+
+        }
+
+        private void hideShowChildren() {
+            if (childrenButton != null) {
+                 childrenButton.setVisibility(View.GONE);
+            }
         }
 
     }
