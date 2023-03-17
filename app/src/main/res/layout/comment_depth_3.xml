@@ -120,6 +120,19 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
+        android:id="@+id/button_children"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:clickable="true"
+        android:gravity="right|center_vertical"
+        android:text="show replies"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/start"
+        app:layout_constraintTop_toBottomOf="@id/comment_body" />
+
+    <TextView
         android:id="@+id/button_reply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

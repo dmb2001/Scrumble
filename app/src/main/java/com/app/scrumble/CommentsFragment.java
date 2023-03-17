@@ -26,6 +26,7 @@ public class CommentsFragment extends BaseFragment{
 
     public static final String NAME = "COMMENTS";
     private static final String KEY_SCRAPBOOK_ID = "KEY_SCRAPBOOK_ID";
+    private static final String KEY_REPLY_ID = "KEY_REPLY_ID";
 
     private Scrapbook scrapbook;
     private List<Comment> orderedComments;
@@ -38,6 +39,14 @@ public class CommentsFragment extends BaseFragment{
         Bundle args = new Bundle();
         args.putLong(KEY_SCRAPBOOK_ID, scrapbookID);
         CommentsFragment fragment = new CommentsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static CommentsFragment newReplyInstance(long scrapbookID, long replyID) {
+        CommentsFragment fragment = CommentsFragment.newInstance(scrapbookID);
+        Bundle args = fragment.getArguments();
+        args.putLong(KEY_REPLY_ID, replyID);
         fragment.setArguments(args);
         return fragment;
     }
