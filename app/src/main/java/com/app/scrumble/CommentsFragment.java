@@ -34,6 +34,7 @@ public class CommentsFragment extends BaseFragment{
     private RecyclerView commentsList;
     private LinearLayoutManager layoutManager;
     private CommentsListAdapter adapter;
+    private long replyID;
 
     public static CommentsFragment newInstance(long scrapbookID) {
         Bundle args = new Bundle();
@@ -92,19 +93,41 @@ public class CommentsFragment extends BaseFragment{
                     @Override
                     public void run() {
                         if(isSafe()){
-                            Log.d("DEBUGGING", "Reply ID: " + getArguments().getLong(KEY_REPLY_ID));
-                            if (getArguments().getLong(KEY_REPLY_ID) == 0) {};
+                            long replyID = getArguments().getLong(KEY_REPLY_ID);
+                            Log.d("DEBUGGING", "Reply ID: " + replyID);
                             Scrapbook scrapbook = getScrapBookDAO().queryScrapbookByID(getArguments().getLong(KEY_SCRAPBOOK_ID));
+
+                            if (replyID != 0) {
+                                Comment replyComment = null;
+                                for (Comment comment : scrapbook.getComments()) {
+                                    replyComment = comment.findCommentById(replyID);
+                                    if (replyComment != null) {
+                                        break;
+                                    }
+                                }
+                                if (replyComment != null) {
+                                    scrapbook = new Scrapbook.ScrapBookBuilder()
+                                            .withID(scrapbook.getID())
+                                            .withOwner(scrapbook.getOwner())
+                                            .withLocation(scrapbook.getLocation())
+                                            .withComments(replyComment.toList(0))
+                                            .build();
+                                }
+                            }
+
+                            Scrapbook finalScrapbook = scrapbook;
                             runOnUIThread(
                                     new Runnable() {
                                         @Override
                                         public void run() {
                                             if(isSafe()){
-                                                CommentsFragment.this.scrapbook = scrapbook;
-                                                Log.d("DEBUGGING", "Original scrapbook had: " + scrapbook.getCommentCount());
+                                                CommentsFragment.this.scrapbook = finalScrapbook;
+                                                CommentsFragment.this.replyID = replyID;
+
+                                                Log.d("DEBUGGING", "Original scrapbook had: " + finalScrapbook.getCommentCount());
                                                 List<Comment> orderedComments = new ArrayList<>();
-                                                if(scrapbook.getCommentCount() > 0){
-                                                    for(Comment comment : scrapbook.getComments()){
+                                                if(finalScrapbook.getCommentCount() > 0){
+                                                    for(Comment comment : finalScrapbook.getComments()){
                                                         orderedComments.addAll(comment.toList(3));
                                                     }
                                                 }
