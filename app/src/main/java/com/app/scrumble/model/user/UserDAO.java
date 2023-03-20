@@ -1,5 +1,6 @@
 package com.app.scrumble.model.user;
 
+import java.util.List;
 import java.util.Set;
 
 public interface UserDAO {
@@ -33,6 +34,12 @@ public interface UserDAO {
      * @param userID the unique ID of the {@link User} to be deleted from the underlying persistence mechanism.
      */
     void deleteUser(long userID);
+
+    /**
+     * @param user the user for whom the list should be returned.
+     * @return The list of users that are followed by the provided @{@link User} or an empty list if the user is following no other users.
+     */
+    List<User> getFollowing(User user);
 
 
 }

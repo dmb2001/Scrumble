@@ -4,6 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class UserDAOImplementation implements UserDAO{
     SQLiteDatabase database;
 
@@ -108,5 +112,16 @@ public class UserDAOImplementation implements UserDAO{
         // delete the correct user
         String[] idStr = {Long.toString(userID)}; // gets id of user to update
         database.delete("Users", "UserID=?", idStr);
+    }
+
+    @Override
+    public List<User> getFollowing(User user) {
+        //just for testing purposes
+        User testUser1 = new User("john", "john@email.com", "123", "scrumblerJohn", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
+        User testUser2 = new User("paul", "paul@email.com", "123", "scrumblerPaul", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
+        ArrayList<User> userList = new ArrayList<>();
+        userList.add(testUser1);
+        userList.add(testUser2);
+        return userList;
     }
 }

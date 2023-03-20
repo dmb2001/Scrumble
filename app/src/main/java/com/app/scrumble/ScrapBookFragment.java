@@ -10,10 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,14 +26,10 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Entry;
-import com.app.scrumble.model.group.scrapbook.Location;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.Tag;
 
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ScrapBookFragment extends BaseFragment {
 

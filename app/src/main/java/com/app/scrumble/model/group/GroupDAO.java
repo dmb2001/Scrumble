@@ -4,7 +4,6 @@ import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.user.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface GroupDAO {
 

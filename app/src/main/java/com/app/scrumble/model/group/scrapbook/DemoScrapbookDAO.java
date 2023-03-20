@@ -312,4 +312,14 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
             Log.d("DEBUGGING", "comment inserted at: " + result);
         }
     }
+
+    @Override
+    public List<Scrapbook> getRecentScrapbooksFor(List<User> users, int limit) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Scrapbook> getScrapbooksForGroup(String tag, Location origin, long maxDistance) {
+        return new ArrayList<>();
+    }
 }

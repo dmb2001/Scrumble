@@ -2,6 +2,7 @@ package com.app.scrumble.model.group.scrapbook;
 
 import com.app.scrumble.model.user.User;
 
+import java.util.List;
 import java.util.Set;
 
 public interface ScrapbookDAO {
@@ -52,5 +53,21 @@ public interface ScrapbookDAO {
      * @param scrapbookID the ID of the {@link Scrapbook} with which this comment is associated
      */
     void createComment(Comment comment, long scrapbookID, Long parentCommentID);
+
+    /**
+     *
+     * @param users A list of users to be included in this query.
+     * @param limit The maximum number of recent scrapbooks to return for any of the provided @{@link User Users}
+     * @return A list of scrapbooks, ordered by publish date (descending)
+     */
+    List<Scrapbook> getRecentScrapbooksFor(List<User> users, int limit);
+
+    /**
+     * @param tag The group tag to which the scrapbooks returned by this method should belong
+     * @param origin The point of origin from which to measure the maxDistance
+     * @param maxDistance The maximum radius from the point of origin from which to include results, or -1 if there should be no limit on distance
+     * @return
+     */
+    List<Scrapbook> getScrapbooksForGroup(String tag, Location origin, long maxDistance);
 
 }
