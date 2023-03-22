@@ -39,7 +39,6 @@ import com.app.scrumble.model.group.scrapbook.Tag;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

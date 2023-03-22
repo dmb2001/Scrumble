@@ -13,7 +13,7 @@ import com.app.scrumble.model.user.UserDAO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDAOImplementation implements GroupDAO{
+public class LocalGroupDAO implements GroupDAO{
 
     SQLiteDatabase database;
     ScrapbookDAO scrapbookDAO;
@@ -32,7 +32,7 @@ public class GroupDAOImplementation implements GroupDAO{
         return cursor.getLong(index);
     }
 
-    public GroupDAOImplementation(SQLiteDatabase database, ScrapbookDAO scrapbookDAO, UserDAO userDAO) {
+    public LocalGroupDAO(SQLiteDatabase database, ScrapbookDAO scrapbookDAO, UserDAO userDAO) {
         this.database = database;
         this.scrapbookDAO = scrapbookDAO;
         this.userDAO = userDAO;

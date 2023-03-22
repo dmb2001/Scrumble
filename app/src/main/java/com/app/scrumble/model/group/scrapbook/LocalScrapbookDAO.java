@@ -20,7 +20,7 @@ import static com.app.scrumble.model.CustomDatabaseOpenHelper.*;
 //TODO for Tikhon: When Robbie finishes implementing UserDAO, update corresponding functions in DemoScrapbookDAO
 //Todo-2 for Tikhon: At some point, create validation mechanisms for the updating and removing methods
 
-public class DemoScrapbookDAO implements ScrapbookDAO{
+public class LocalScrapbookDAO implements ScrapbookDAO{
 
     private final SQLiteDatabase database;
     private final Scrapbook.ScrapBookBuilder builder = new Scrapbook.ScrapBookBuilder();
@@ -28,7 +28,7 @@ public class DemoScrapbookDAO implements ScrapbookDAO{
     private UserDAO userDAO;
 
     //Constructor which takes an SQLite Database
-    public DemoScrapbookDAO(SQLiteDatabase newDataBase, UserDAO userDAO) {
+    public LocalScrapbookDAO(SQLiteDatabase newDataBase, UserDAO userDAO) {
         database = newDataBase;
         this.userDAO = userDAO;
     }

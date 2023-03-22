@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class UserDAOImplementation implements UserDAO{
+public class LocalUserDAO implements UserDAO{
     SQLiteDatabase database;
 
-    public UserDAOImplementation (SQLiteDatabase database) {
+    public LocalUserDAO(SQLiteDatabase database) {
         this.database = database;
     }
 
