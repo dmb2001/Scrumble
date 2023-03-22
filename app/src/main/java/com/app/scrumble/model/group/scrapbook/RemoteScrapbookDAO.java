@@ -286,6 +286,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                         new Object[]{scrapbook.getOwner().getId(), scrapbook.getLikes(), scrapbook.getTitle(),
                                 scrapbook.getDescription(),scrapbook.getTimestamp(),scrapbook.getLocation().getLatitude(),
                                 scrapbook.getLocation().getLongitude()});
+        scrapbook.setID(result.getGeneratedID());
 
 
         scrapbook.setID(result.getGeneratedID());
@@ -302,7 +303,6 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             }
         }
 
-        scrapbook.setID(result.getGeneratedID());
         Log.d("DEBUGGING", "Scrapbook Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
