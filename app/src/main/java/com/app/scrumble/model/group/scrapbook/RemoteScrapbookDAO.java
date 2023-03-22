@@ -314,6 +314,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         RemoteDatabaseConnection.InsertResult result =
                 database.executeInsert("Entries", new String[]{"ScrapbookID","Timestamp","Caption"},
                         new Object[]{scrapbookID, entry.getTimeStamp(), entry.getCaption()});
+        entry.setID(result.getGeneratedID());
         Log.d("DEBUGGING:", "Entry Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
