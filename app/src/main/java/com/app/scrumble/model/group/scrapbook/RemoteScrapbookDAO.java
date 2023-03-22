@@ -383,6 +383,30 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public List<Scrapbook> getScrapbooksForGroup(String tag, Location origin, long maxDistance) {
-        return new ArrayList<>();
+        List<Map<String, Object>> q = database.executeRawQuery(
+                "SELECT Latitude, Longitude, ScrapbookID FROM Scrapbooks" +
+                        " LEFT JOIN ScrapbookGroups" +
+                        " ON Scrapbooks.ScrapbookID = ScrapbookGroups.ScrapbookID" +
+                        " WHERE ScrapbookGroups.GroupID = ?"
+                , new Object[]{tag});
+
+        List<Scrapbook> scrapbooks = new ArrayList<>();
+        Log.d("DEBUGGING:", "Local Scrapbook Size: " + q.size());
+
+        for (Map<String,Object> row : q) {
+            double lat = (double) row.get("Latitude");
+            double longi = (double) row.get("Longitude");
+            Location bookLocation = new Location(lat, longi);
+
+            long dist = Location.distanceBetween(origin, bookLocation);
+            if (dist <= maxDistance) {
+                long id = (long) row.get("ScrapbookID");
+                Scrapbook scrapbook = queryScrapbookByID(id);
+                scrapbooks.add(scrapbook);
+                Log.d("DEBUGGING:", "Scrapbook ID: " + id + ", Distance: " + dist);
+            }
+        }
+
+        return scrapbooks;
     }
 }
