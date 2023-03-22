@@ -66,6 +66,7 @@ public class S3ImageUploader implements ImageUploader{
 
             @Override
             public void onError(int id, Exception ex) {
+                Log.d("DEBUGGING", "Error transferring image!");
                 // Handle errors
             }
         });

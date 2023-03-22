@@ -16,7 +16,7 @@ import com.app.scrumble.model.user.LocalUserDAO;
 
 public class Scrumble extends Application {
 
-    private RemoteDatabaseConnection databaseConnection;
+    private final RemoteDatabaseConnection databaseConnection = new RemoteDatabaseConnection();
     private SQLiteDatabase database;
 
     public final SQLiteDatabase getDatabase(){
@@ -26,7 +26,9 @@ public class Scrumble extends Application {
         return database;
     }
 
-    public final UserDAO getUserDAO(){ return new LocalUserDAO(getDatabase());}
+    public final UserDAO getUserDAO(){
+        return new LocalUserDAO(getDatabase());
+    }
 
     public final ScrapbookDAO getScrapBookDAO(){
         return new LocalScrapbookDAO(getDatabase(), getUserDAO());

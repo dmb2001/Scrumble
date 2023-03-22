@@ -14,9 +14,9 @@ public interface ScrapbookDAO {
     Scrapbook queryScrapbookByID(long id);
 
     /**
-     * Query all scrapbooks within a given radius from a given latitude/longitude.
+     * Query all scrapbooks within a given radius (in metres) from a given latitude/longitude.
      * @param start The starting location
-     * @param maxDistance the maximum radius
+     * @param maxDistance the maximum radius, in metres, from the starting location. The query should return all scrapbooks that fall within this radius
      * @return the set of {@link Scrapbook} objects that fall within the given radius, or null if there are no such scrapbooks
      */
     Set<Scrapbook> queryScrapbooksByLocation(Location start, long maxDistance);

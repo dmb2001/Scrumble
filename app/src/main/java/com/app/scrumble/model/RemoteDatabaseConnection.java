@@ -231,6 +231,30 @@ public class RemoteDatabaseConnection {
         }
     }
 
+    /**
+     * Prefer using {@link RemoteDatabaseConnection#executeQuery(String, String[], String, Object[])} for simple queries on single tables. Use this method where you need to provide more complicated queries with JOINS etc.
+     * @param sql the sql to be executed. Replace values with the placeholder character "?". For example, in where clauses write "WHERE column1 = ?". Then provide the actual values, in the same order
+     *            using the params object array parameter.
+     * @param params The values that placeholders in the SQL will be replaced by
+     * @return a {@link List} of {@link Map} objects representing each row in the result. May be empty, but never null
+     */
+    public List<Map<String, Object>> executeRawQuery(String sql, Object[] params){
+        if (connection == null){
+            setUpConnection();
+        }
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            if(params != null && params.length > 0){
+                for(int i = 0; i < params.length; i++){
+                    preparedStatement.setObject(i+1, params[i]);
+                }
+            }
+            return convertResultSetToMaps(preparedStatement.executeQuery());
+        }catch (Exception e){
+            throw new DatabaseException("Could not execute raw query! Details:" + e.getMessage());
+        }
+    }
+
     private void setUpConnection() throws DatabaseException {
 
         try {
