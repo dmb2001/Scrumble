@@ -259,16 +259,18 @@ public class RemoteDatabaseConnection {
 
         try {
             // Load the JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
 
             // Establish a connection
-            String url = "jdbc:mysql://scrumble.cvqntnx7bdmt.eu-north-1.rds.amazonaws.com:3306/Scrumble";
+            String url = "jdbc:mysql://scrumble.cvqntnx7bdmt.eu-north-1.rds.amazonaws.com:3306/Scrumble?useUnicode=true&characterEncoding=UTF-8";
             String username = "user";
             String password = "Scrumble123";
             connection = DriverManager.getConnection(url, username, password);
 
         }catch (Exception e){
-            throw new DatabaseException("Could not connect to database! Details: " + e.getMessage());
+            e.printStackTrace();
+            throw new DatabaseException("Could not connect to database!");
         }
     }
 
@@ -280,7 +282,7 @@ public class RemoteDatabaseConnection {
 
     }
 
-    public final class InsertResult{
+    public static final class InsertResult{
 
         private final boolean successful;
         private final Integer generatedID;
