@@ -3,20 +3,18 @@ package com.app.scrumble.model.group.scrapbook;
 import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
-import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.User.UserBuilder;
 import com.app.scrumble.model.user.UserDAO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-
 
 //TODO for Tikhon: When Robbie finishes implementing UserDAO, update corresponding functions in DemoScrapbookDAO
 //Todo-2 for Tikhon: At some point, create validation mechanisms for the updating and removing methods
@@ -40,17 +38,28 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         User author = null;
         for(Map.Entry<String,Object> entry : row.entrySet()){
             if(entry.getKey().equals("CommentID")) {
-                commentID = (long) entry.getValue();
+                commentID = new Long((int)entry.getValue());
             } else if(entry.getKey().equals("Timestamp")){
-                timestamp = (long) entry.getValue();
+                Timestamp sqlTimestamp = (Timestamp)entry.getValue();
+                timestamp = sqlTimestamp.getTime();
             } else if (entry.getKey().equals("UserID")){
-                long authorID = (long) entry.getValue();
+                long authorID = new Long((int)entry.getValue());
                 author = userDAO.queryUserByID(authorID);
             } else if (entry.getKey().equals("CommentText")){
                 commentText = (String) entry.getValue();
             }
         }
-        return new Comment(commentID,timestamp,commentText,author);
+        Comment comment = new Comment(commentID,timestamp,commentText,author);
+
+        List<Map<String,Object>> childCommentResult = database.executeQuery("Comments",null,"ParentCommentID = ?",new Object[]{commentID});
+        if(!childCommentResult.isEmpty()){
+            List<Comment> children = new ArrayList<>();
+            for (Map<String,Object> cc : childCommentResult){
+                children.add(constructComment(cc));
+            }
+            comment.addChildren(children);
+        }
+        return comment;
     }
 
     private Comment queryCommentByID(long commentID) {
@@ -119,7 +128,8 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 } else if (entry.getKey().equals("Description")){
                     description = (String) entry.getValue();
                 } else if (entry.getKey().equals("Timestamp")){
-                    timestamp = (long) entry.getValue();
+                    Timestamp sqlTimestamp = (Timestamp)entry.getValue();
+                    timestamp = sqlTimestamp.getTime();
                 } else if (entry.getKey().equals("Latitude")){
                     latitude = (double) entry.getValue();
                 } else if (entry.getKey().equals("Longitude")){
@@ -132,12 +142,14 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 return null;
             }
 
-            List<Map<String,Object>> commentResults = database.executeQuery("Comments",null,"ScrapbookID = ?",new Object[]{scrapbookID});
+            List<Map<String,Object>> topLevelCommentsRows = database.executeQuery("Comments",null,"ScrapbookID = ? AND ParentCommentID IS NULL",new Object[]{scrapbookID});
 
-            List<Comment> comments = new ArrayList<Comment>();
+            Log.d("DEBUGGING", "There were " + topLevelCommentsRows.size() + " top level comments");
 
-            for (Map<String,Object> comment : commentResults) {
-                comments.add(constructComment(comment));
+            List<Comment> topLevelComments = new ArrayList<Comment>();
+
+            for (Map<String,Object> comment : topLevelCommentsRows) {
+                topLevelComments.add(constructComment(comment));
             }
 
             Location scrapbookLocation = new Location(latitude,longitude);
@@ -148,7 +160,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
             return builder.withID(scrapbookID).withOwner(author).withTitle(title).withDescription(description)
                     .withTimeStamp(timestamp).withLocation(scrapbookLocation).withTags(tags).withEntries(entries).
-                    withComments(comments).build();
+                    withComments(topLevelComments).build();
         }
 
         return null;
@@ -199,7 +211,8 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             List<Entry> memories = new ArrayList<>();
 
             for (Map<String,Object> row : q) {
-                Entry memory = new Entry((Long) row.get("EntryID"), (Long) row.get("Timestamp"), (String) row.get("Caption"));
+                Entry memory = new Entry(new Long((int)row.get("EntryID")) , ((Timestamp) row.get("Timestamp")).getTime(), (String) row.get("Caption"));
+                memories.add(memory);
             }
             return memories;
         }
@@ -230,7 +243,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 }else if(entry.getKey().equals("Title")){
                     scrapBookBuilder.withTitle((String) entry.getValue());
                 }else if(entry.getKey().equals("Timestamp")){
-                    scrapBookBuilder.withTimeStamp((long) entry.getValue());
+                    scrapBookBuilder.withTimeStamp(((Timestamp) row.get("Timestamp")).getTime());
                 }else if(entry.getKey().equals("Latitude")){
                     latitude = (Double) entry.getValue();
                 }else if(entry.getKey().equals("Longitude")){
@@ -284,7 +297,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         RemoteDatabaseConnection.InsertResult result =
                 database.executeInsert("Scrapbooks", new String[]{"UserID","Likes","Title","Description","Timestamp","Latitude","Longitude"},
                         new Object[]{scrapbook.getOwner().getId(), scrapbook.getLikes(), scrapbook.getTitle(),
-                                scrapbook.getDescription(),scrapbook.getTimestamp(),scrapbook.getLocation().getLatitude(),
+                                scrapbook.getDescription(),new Timestamp(scrapbook.getTimestamp()),scrapbook.getLocation().getLatitude(),
                                 scrapbook.getLocation().getLongitude()});
         scrapbook.setID(result.getGeneratedID());
 
@@ -313,7 +326,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
     public void createEntry(Entry entry, long scrapbookID) {
         RemoteDatabaseConnection.InsertResult result =
                 database.executeInsert("Entries", new String[]{"ScrapbookID","Timestamp","Caption"},
-                        new Object[]{scrapbookID, entry.getTimeStamp(), entry.getCaption()});
+                        new Object[]{scrapbookID, new Timestamp(entry.getTimeStamp()), entry.getCaption()});
         entry.setID(result.getGeneratedID());
         Log.d("DEBUGGING:", "Entry Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
@@ -336,8 +349,8 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
     public void createComment(Comment comment, long scrapbookID, Long parentCommentID) {
         RemoteDatabaseConnection.InsertResult result =
                 database.executeInsert("Comments",
-                        new String[]{"UserID","ScrapbookID","CommentText","Timestamp","ParentCommentID"},
-                        new Object[]{comment.getAuthor().getId(),scrapbookID,comment.getContent(),comment.getTimeStamp(),
+                        new String[]{"UserID","ScrapbookID","Comment","Timestamp","ParentCommentID"},
+                        new Object[]{comment.getAuthor().getId(),scrapbookID,comment.getContent(),new Timestamp(comment.getTimeStamp()),
                             parentCommentID});
         Log.d("DEBUGGING:", "Tag Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
