@@ -7,24 +7,15 @@ public class User {
     public static final long TYPE_USER = 0;
     public static final long TYPE_ADMIN = 1;
 
-    private final long id;
-    private final String username;
+    private Long id;
+    private String username;
 
     private String email;
     private String name;
     private String password;
-    private long userType;
+    private Long userType;
 
-    public User(String name, String email, String password, String username, long id, long userType){
-        this.username = username;
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        if(userType != TYPE_USER && userType != TYPE_ADMIN){
-            throw new IllegalArgumentException();
-        }
-        this.userType = userType;
+    private User(){
     }
 
     public String getName() {
@@ -63,6 +54,55 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    public static final class UserBuilder{
+
+        private User user;
+
+        public UserBuilder(){
+            this.user = new User();
+        }
+
+        public UserBuilder withID(long id){
+            this.user.id = id;
+            return this;
+        }
+
+        public UserBuilder withUsername(String username){
+            this.user.username = username;
+            return this;
+        }
+
+        public UserBuilder withEmail(String email){
+            this.user.email = email;
+            return this;
+        }
+
+        public UserBuilder withName(String name){
+            this.user.name = name;
+            return this;
+        }
+
+        public UserBuilder withPassword(String password){
+            this.user.password = password;
+            return this;
+        }
+
+        public UserBuilder withUserType(long userType){
+            this.user.userType = userType;
+            return this;
+        }
+
+        public User build(){
+            if(this.user.userType != TYPE_USER && this.user.userType != TYPE_ADMIN){
+                throw new IllegalStateException("provided usertype must be one of the allowed values");
+            }
+            User constructedUser = this.user;
+            this.user = new User();
+            return constructedUser;
+        }
+
     }
 
 }

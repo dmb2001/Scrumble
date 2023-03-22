@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.app.scrumble.model.user.User.UserBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,6 +58,7 @@ public class LocalUserDAO implements UserDAO{
 
         // get the needed values from the cursor
         cursor.moveToFirst();
+
         String name = getStringFromCursor(cursor, "Name");
         String username = getStringFromCursor(cursor, "Username");
         String email = getStringFromCursor(cursor, "Email");
@@ -63,7 +66,7 @@ public class LocalUserDAO implements UserDAO{
         String password = getStringFromCursor(cursor, "Password");
 
         // create a new user class from the returned values
-        return new User(name, email, password, username, userID, userType);
+        return new UserBuilder().withID(userID).withName(name).withUsername(username).withEmail(email).withUserType(userType).withPassword(password).build();
     }
 
     @Override
@@ -89,7 +92,7 @@ public class LocalUserDAO implements UserDAO{
         String password = getStringFromCursor(cursor, "Password");
 
         // create a new user class from the returned values
-        return new User(name, email, password, username, userID, userType);
+        return new UserBuilder().withID(userID).withName(name).withUsername(username).withEmail(email).withUserType(userType).withPassword(password).build();
     }
 
     @Override
@@ -117,11 +120,11 @@ public class LocalUserDAO implements UserDAO{
     @Override
     public List<User> getFollowing(User user) {
         //just for testing purposes
-        User testUser1 = new User("john", "john@email.com", "123", "scrumblerJohn", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
-        User testUser2 = new User("paul", "paul@email.com", "123", "scrumblerPaul", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
+//        User testUser1 = new User("john", "john@email.com", "123", "scrumblerJohn", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
+//        User testUser2 = new User("paul", "paul@email.com", "123", "scrumblerPaul", UUID.randomUUID().getMostSignificantBits(), User.TYPE_USER);
         ArrayList<User> userList = new ArrayList<>();
-        userList.add(testUser1);
-        userList.add(testUser2);
+//        userList.add(testUser1);
+//        userList.add(testUser2);
         return userList;
     }
 }

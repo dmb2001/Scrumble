@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
 import com.app.scrumble.model.RemoteDatabaseConnection.InsertResult;
+import com.app.scrumble.model.user.User.UserBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -42,32 +43,26 @@ public class RemoteUserDAO implements UserDAO{
     }
 
     private User convertToUser(Map<String,Object> row){
-        Long id = null;
-        String email = null;
-        String name = null;
-        String password = null;
-        Long userType = null;
+        UserBuilder builder = new UserBuilder();
         for(Entry<String,Object> entry : row.entrySet()){
             if(entry.getKey().equals("UserID")){
-                id = (long) entry.getValue();
+                builder.withID((long) entry.getValue());
             }else if(entry.getKey().equals("Name")){
-                name = (String) entry.getValue();
+                builder.withName((String) entry.getValue());
             }else if(entry.getKey().equals("EmailAddress")){
-                email = (String) entry.getValue();
+                builder.withEmail((String) entry.getValue());
             }else if(entry.getKey().equals("Password")){
-                password = (String) entry.getValue();
+                builder.withPassword((String) entry.getValue());
             }else if(entry.getKey().equals("TypeUser")){
                 String storedType = (String) entry.getValue();
                 if(storedType.equals("User")){
-                    userType = User.TYPE_USER;
-                }else if(storedType.equals("Moderator")){
-                    userType = User.TYPE_ADMIN;
-                }else if(storedType.equals("Admin")){
-                    userType = User.TYPE_ADMIN;
+                    builder.withUserType(User.TYPE_USER);
+                }else {
+                    builder.withUserType(User.TYPE_ADMIN);
                 }
             }
         }
-        return new User("unknownName", email, password, name, id, userType);
+        return builder.build();
     }
 
     @Override
