@@ -36,7 +36,7 @@ public class RemoteUserDAO implements UserDAO{
 
     @Override
     public User queryUserByUsername(String username) {
-        List<Map<String,Object>> results = database.executeQuery("Users", null, "name = ?", new Object[]{username});
+        List<Map<String,Object>> results = database.executeQuery("Users", null, "Username = ?", new Object[]{username});
         if(results.size() == 1){
             return convertToUser(results.get(0));
         }
@@ -47,7 +47,7 @@ public class RemoteUserDAO implements UserDAO{
         UserBuilder builder = new UserBuilder();
         for(Entry<String,Object> entry : row.entrySet()){
             if(entry.getKey().equals("UserID")){
-                builder.withID((long) entry.getValue());
+                builder.withID(((Integer) entry.getValue()).longValue());
             }else if(entry.getKey().equals("Name")){
                 builder.withName((String) entry.getValue());
             }else if(entry.getKey().equals("EmailAddress")){
