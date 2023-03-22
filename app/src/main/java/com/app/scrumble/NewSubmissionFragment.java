@@ -261,7 +261,8 @@ public class NewSubmissionFragment extends BaseFragment{
 
         addToGroupButton = parentLayout.findViewById(R.id.button_add_to_group);
 
-        List<com.app.scrumble.model.group.Group> userGroups = getGroupDAO().queryUserGroups(getCurrentUser().getId());
+//        List<com.app.scrumble.model.group.Group> userGroups = getGroupDAO().queryUserGroups(getCurrentUser().getId());//TODO this needs to run in the background or it will crash, setting it to null temporarliity
+        List<com.app.scrumble.model.group.Group> userGroups = null;
 
         //If the user is not part of any groups(i.e. userGroups == null),
         //do not show the button for adding the Scrapbook to groups
