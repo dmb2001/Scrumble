@@ -33,7 +33,7 @@ public class Scrapbook {
 
     private Scrapbook(){}
 
-    public long getID() {
+    public Long getID() {
         return ID;
     }
 
