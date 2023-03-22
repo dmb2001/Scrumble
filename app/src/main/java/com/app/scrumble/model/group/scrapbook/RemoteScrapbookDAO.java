@@ -226,17 +226,17 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             User.UserBuilder userBuilder = new UserBuilder();
             for(Map.Entry<String, Object> entry : row.entrySet()){
                 if(entry.getKey().equals("ScrapbookID")){
-                    scrapBookBuilder.withID(new Long((int)entry.getValue()));
+                    scrapBookBuilder.withID(((Integer) entry.getValue()).longValue());
                 }else if(entry.getKey().equals("Title")){
                     scrapBookBuilder.withTitle((String) entry.getValue());
                 }else if(entry.getKey().equals("Timestamp")){
-                    scrapBookBuilder.withTimeStamp((Long) entry.getValue());
+                    scrapBookBuilder.withTimeStamp(((Integer) entry.getValue()).longValue());
                 }else if(entry.getKey().equals("Latitude")){
                     latitude = (Double) entry.getValue();
                 }else if(entry.getKey().equals("Longitude")){
                     longitude = (Double) entry.getValue();
                 }else if(entry.getKey().equals("UserID")){
-                    userBuilder.withID(new Long((int)entry.getValue()));
+                    userBuilder.withID( ((Integer) entry.getValue()).longValue());
                 }else if(entry.getKey().equals("Name")){
                     userBuilder.withName((String) entry.getValue());
                 }else if(entry.getKey().equals("EmailAddress")){

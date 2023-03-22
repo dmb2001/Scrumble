@@ -200,7 +200,6 @@ public class Scrapbook {
         }
 
         public Scrapbook build(){
-            Objects.requireNonNull(scrapbook.ID);
             Objects.requireNonNull(scrapbook.owner);
             Objects.requireNonNull(scrapbook.location);
 
