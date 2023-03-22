@@ -9,8 +9,11 @@ import com.app.scrumble.model.RemoteDatabaseConnection;
 import com.app.scrumble.model.S3ImageUploader;
 import com.app.scrumble.model.group.GroupDAO;
 import com.app.scrumble.model.group.LocalGroupDAO;
+import com.app.scrumble.model.group.RemoteGroupDAO;
 import com.app.scrumble.model.group.scrapbook.LocalScrapbookDAO;
+import com.app.scrumble.model.group.scrapbook.RemoteScrapbookDAO;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
+import com.app.scrumble.model.user.RemoteUserDAO;
 import com.app.scrumble.model.user.UserDAO;
 import com.app.scrumble.model.user.LocalUserDAO;
 
@@ -27,15 +30,15 @@ public class Scrumble extends Application {
     }
 
     public final UserDAO getUserDAO(){
-        return new LocalUserDAO(getDatabase());
+        return new RemoteUserDAO(databaseConnection);
     }
 
     public final ScrapbookDAO getScrapBookDAO(){
-        return new LocalScrapbookDAO(getDatabase(), getUserDAO());
+        return new RemoteScrapbookDAO(databaseConnection, getUserDAO());
     }
 
     public final GroupDAO getGroupDAO(){
-        return new LocalGroupDAO(getDatabase(), getScrapBookDAO(), getUserDAO());
+        return new RemoteGroupDAO(databaseConnection, getScrapBookDAO(), getUserDAO());
     }
 
     /**
