@@ -322,10 +322,14 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     private void createTag(Tag tag, long scrapbookID) {
         //Create a new Tag in the Tags table, in case it doesn't exist
-        RemoteDatabaseConnection.InsertResult tagCreateResult =
-                database.executeInsert("Tags", new String[]{"TagName","TagHidden"},
-                        new Object[]{tag.getName(), tag.isHidden()});
-        Log.d("DEBUGGING:", "Tag Insert Result: " + tagCreateResult.isSuccessful());
+        try {
+            RemoteDatabaseConnection.InsertResult tagCreateResult =
+                    database.executeInsert("Tags", new String[]{"TagName", "TagHidden"},
+                            new Object[]{tag.getName(), tag.isHidden()});
+            Log.d("DEBUGGING:", "Tag Insert Result: " + tagCreateResult.isSuccessful());
+        } catch (RemoteDatabaseConnection.DatabaseException e) {
+            Log.d("DEBUGGING",e.getMessage());
+        }
 
         //Create a new association between this Tag and the Scrapbook in the ScrapbookTags table
         RemoteDatabaseConnection.InsertResult tagAssociateResult =
