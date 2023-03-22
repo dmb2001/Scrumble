@@ -1,33 +1,14 @@
 package com.app.scrumble.model.group.scrapbook;
 
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_CAPTION;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_COMMENT_ID;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_COMMENT_TEXT;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_DESCRIPTION;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_ENTRY_ID;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_LATITUDE;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_LIKES;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_LONGITUDE;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_PARENT_COMMENT_ID;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_SCRAPBOOK_ID;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_TAG_HIDDEN;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_TAG_NAME;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_TIMESTAMP;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_TITLE;
-import static com.app.scrumble.model.CustomDatabaseOpenHelper.COLUMN_USER_ID;
-
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
-import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.UserDAO;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +22,6 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     private final RemoteDatabaseConnection database;
     private final Scrapbook.ScrapBookBuilder builder = new Scrapbook.ScrapBookBuilder();
-
     private UserDAO userDAO;
 
     //Constructor which takes a remote database.
@@ -205,23 +185,20 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
         return tags;
     }
-    private List<Entry> queryEntriesByScrapBookID(long scrapbookID){
-        Cursor c = database.rawQuery("SELECT * FROM Entries WHERE " + COLUMN_SCRAPBOOK_ID + "=? ORDER BY " + COLUMN_TIMESTAMP + " DESC", new String[]{Long.toString(scrapbookID)});
-        if(c.getCount() == 0){
+
+    private List<Entry> queryEntriesByScrapbookID(long scrapbookID) {
+        List<Map<String, Object>> q = database.executeQuery("Entries", null, "ScrapbookID=?", new Object[]{scrapbookID});
+
+        if (q.size() == 0) {
             return new ArrayList<Entry>(); //If there are no entries, return an empty ArrayList of Entries
-        }else{
-            Log.d("DEBUGGING", "cursor has " + c.getCount() + " entries");
+        } else {
+            Log.d("DEBUGGING", "query returned " + q.size() + " entries");
             List<Entry> memories = new ArrayList<>();
 
-            c.moveToFirst();
-            while (true){
-                Entry memory = new Entry(c.getLong(c.getColumnIndex(COLUMN_ENTRY_ID)), c.getLong(c.getColumnIndex(COLUMN_TIMESTAMP)), c.getString(c.getColumnIndex(COLUMN_CAPTION)));
-                memories.add(memory);
-                c.moveToNext();
-                if (c.isAfterLast()) {
-                    break;
-                }
+            for (Map<String,Object> row : q) {
+                Entry memory = new Entry((Long) row.get("EntryID"), (Long) row.get("Timestamp"), (String) row.get("Caption"));
             }
+
             return memories;
         }
     }
@@ -316,7 +293,43 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public List<Scrapbook> getRecentScrapbooksFor(List<User> users, int limit) {
-        return new ArrayList<>();
+        String whereClause = "";
+        LinkedList<Object> uids = new LinkedList<>(); // params for query
+
+        for (User u : users) {
+            if (whereClause.isEmpty()) {
+                whereClause = "UserID = ?";
+            } else {
+                whereClause += " OR UserID = ?";
+            }
+
+            uids.add(u.getId()); // add userids to params
+        }
+
+        // add limit to end of params
+        uids.add(limit);
+
+        // execute query
+        List<Map<String, Object>> q = database.executeRawQuery(
+                "SELECT ScrapbookID FROM Scrapbooks" +
+                        " WHERE " + whereClause +
+                        " ORDER BY Timestamp DESC" +
+                        " LIMIT ?;"
+        , uids.toArray());
+
+        if (q.size() > 0) {
+            List<Scrapbook> scrapbooks = new ArrayList<>();
+
+            for (Map<String,Object> row : q) {
+                long id = (long) row.get("ScrapbookID");
+                Scrapbook scrapbook = queryScrapbookByID(id);
+                scrapbooks.add(scrapbook);
+            }
+
+            return scrapbooks;
+        }
+
+        return null;
     }
 
     @Override
