@@ -32,18 +32,22 @@ public class RemoteGroupDAO implements GroupDAO {
         RemoteDatabaseConnection.InsertResult result = database.executeInsert(
                 "Groups1", new String[]{"GroupName","GroupOwnerID"},
                 new Object[]{group.getName(), group.getGroupOwnerID()});
+
         Log.d("DEBUGGING", "Group Insert Result: " + result.isSuccessful() + ", Generated Key: " + result.getGeneratedID());
 
+        group.setGroupID(result.getGeneratedID());
+
         //Also, make the first member of the group, i.e. the creator, join the group using the next method
-        joinGroup(group.getMembers().get(0).getId(),group.getID());
-    }
+        joinGroup(group.getMembers().get(0).getId(), result.getGeneratedID());
+
+        }
 
     @Override
     public void joinGroup(long userID, long groupID) {
         RemoteDatabaseConnection.InsertResult result = database.executeInsert(
-                "UserGroups", new String[]{"UserID","GroupID"},
-                new Object[]{userID, groupID});
-        Log.d("DEBUGGING", "Group Join Result: " + result.isSuccessful() + ", Generated Key: " + result.getGeneratedID());
+                "UserGroups", new String[]{"GroupID","UserID"},
+                new Object[]{groupID, userID});
+        Log.d("DEBUGGING", "Group Join Result: " + result.isSuccessful());
     }
 
     @Override
@@ -51,7 +55,7 @@ public class RemoteGroupDAO implements GroupDAO {
         RemoteDatabaseConnection.InsertResult result = database.executeInsert(
                 "ScrapbookGroups", new String[]{"ScrapbookID","GroupID"},
                 new Object[]{scrapbookID, groupID});
-        Log.d("DEBUGGING", "Post to Group Result: " + result.isSuccessful() + ", Generated Key: " + result.getGeneratedID());
+        Log.d("DEBUGGING", "Post to Group Result: " + result.isSuccessful());
     }
 
     @Override
