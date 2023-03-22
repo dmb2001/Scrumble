@@ -30,7 +30,7 @@ public class RemoteGroupDAO implements GroupDAO {
     @Override
     public void createGroup(Group group) {
         RemoteDatabaseConnection.InsertResult result = database.executeInsert(
-                "Groups", new String[]{"GroupName","GroupOwnerID"},
+                "Groups1", new String[]{"GroupName","GroupOwnerID"},
                 new Object[]{group.getName(), group.getGroupOwnerID()});
         Log.d("DEBUGGING", "Group Insert Result: " + result.isSuccessful() + ", Generated Key: " + result.getGeneratedID());
 
@@ -89,7 +89,7 @@ public class RemoteGroupDAO implements GroupDAO {
     @Override
     public Group queryGroupByID(long groupID) {
         //Get a List of Maps of Strings to objects of groups corresponding to the ID.
-        List<Map<String,Object>> results = database.executeQuery("Groups", null, "GroupID = ?", new Object[]{groupID});
+        List<Map<String,Object>> results = database.executeQuery("Groups1", null, "GroupID = ?", new Object[]{groupID});
         if(results.size() == 1){
             Log.d("DEBUGGING:", "Group found!");
             //Initialize the variables
@@ -199,7 +199,7 @@ public class RemoteGroupDAO implements GroupDAO {
     @Override
     public ArrayList<Group> queryUserGroups(long userID) {
         //Get a List of Maps of Strings to objects of groups corresponding to the userID.
-        List<Map<String,Object>> results = database.executeQuery("UserGroups,Groups", null, "UserID = ? AND UserGroups.GroupID = Groups.GroupID", new Object[]{userID});
+        List<Map<String,Object>> results = database.executeQuery("UserGroups,Groups1", null, "UserID = ? AND UserGroups.GroupID = Groups1.GroupID", new Object[]{userID});
 
         //If the user follows no groups, return null
         if (results.size() == 0) {
