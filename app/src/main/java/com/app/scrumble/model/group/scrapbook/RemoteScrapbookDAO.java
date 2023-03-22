@@ -55,7 +55,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         Long timestamp = null;
         String commentText = null;
         User author = null;
-        for(Map.Entry<String,Object> entry : commentRow.entrySet()){
+        for(Map.Entry<String,Object> entry : row.entrySet()){
             if(entry.getKey().equals("CommentID")) {
                 commentID = (long) entry.getValue();
             } else if(entry.getKey().equals("Timestamp")){
@@ -234,93 +234,84 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public Set<Scrapbook> queryScrapbooksByUser(User user) {
-        Set<Scrapbook> result = new HashSet<>();
+        Set<Scrapbook> scrapbooks = new HashSet<>();
 
-        //Get all scrapbook IDs from scrapbooks whose user ID matches with that of the user in the method
-        Cursor c = database.rawQuery("SELECT ScrapbookID FROM Scrapbooks WHERE UserID=?",new String[]{Long.toString(user.getId())});
-        while (c.moveToNext()) {
-            Scrapbook nextBook = queryScrapbookByID(c.getLong(0));
-            if (nextBook != null) {
-                result.add(nextBook);
+        //Get a query based on User's ID
+        List<Map<String,Object>> results = database.executeRawQuery(
+                "SELECT ScrapbookID FROM Scrapbooks WHERE UserID = ?", new Object[]{user.getId()});
+
+        for (Map<String,Object> row : results) {
+            for (Map.Entry<String,Object> entry : row.entrySet()) {
+                if (entry.getKey().equals("ScrapbookID")) {
+                    long scrapbookID = (long) entry.getValue();
+                    Scrapbook newScrapbook = queryScrapbookByID(scrapbookID);
+                    scrapbooks.add(newScrapbook);
+                }
             }
         }
 
-        return result;
+        return scrapbooks;
     }
 
     @Override
     public void createScrapbook(Scrapbook scrapbook) {
-        ContentValues scrapbookValues = new ContentValues();
-        scrapbookValues.put("ScrapbookID",scrapbook.getID());
-        scrapbookValues.put("UserID",scrapbook.getOwner().getId());
-        scrapbookValues.put("Likes",scrapbook.getLikes());
-        scrapbookValues.put("Title",scrapbook.getTitle());
-        scrapbookValues.put("Description",scrapbook.getDescription());
-        scrapbookValues.put("Timestamp",scrapbook.getTimestamp());
-        scrapbookValues.put("Latitude",scrapbook.getLocation().getLatitude());
-        scrapbookValues.put("Longitude",scrapbook.getLocation().getLongitude());
-        long insertedAt = database.insert("Scrapbooks",null,scrapbookValues);
-        if(insertedAt != -1 && scrapbook.getEntries() != null){
+        RemoteDatabaseConnection.InsertResult result =
+                database.executeInsert("Scrapbooks", new String[]{"UserID","Likes","Title","Description","Timestamp","Latitude","Longitude"},
+                        new Object[]{scrapbook.getOwner().getId(), scrapbook.getLikes(), scrapbook.getTitle(),
+                                scrapbook.getDescription(),scrapbook.getTimestamp(),scrapbook.getLocation().getLatitude(),
+                                scrapbook.getLocation().getLongitude()});
+
+
+        if(scrapbook.getEntries() != null){
             for (Entry entry : scrapbook.getEntries()){
                 createEntry(entry, scrapbook.getID());
             }
         }
-        if(insertedAt != -1 && scrapbook.getTags() != null) {
+
+        if(scrapbook.getTagCount() > 0) {
             for (Tag tag : scrapbook.getTags()) {
                 createTag(tag, scrapbook.getID());
             }
         }
+
+        Log.d("DEBUGGING", "Scrapbook Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
     @Override
-    public void deleteScrapbook(long id) {
-        database.delete("Scrapbooks","ScrapbookID=?",new String[]{Long.toString(id)});
+    public void deleteScrapbook(long scrapbookID) {
+        database.executeDelete("Scrapbooks", "ScrapbookID = ?", new Object[]{scrapbookID});
     }
 
     @Override
     public void createEntry(Entry entry, long scrapbookID) {
-        ContentValues entryValues = new ContentValues();
-        entryValues.put(COLUMN_SCRAPBOOK_ID,scrapbookID);
-        entryValues.put(COLUMN_ENTRY_ID,entry.getID());
-        entryValues.put(COLUMN_TIMESTAMP,entry.getTimeStamp());
-        entryValues.put(COLUMN_CAPTION,entry.getCaption());
-        long result = database.insert("Entries",null,entryValues);
-        if(result < 0){
-            Log.d("DEBUGGING", "Error inserting comment!");
-        }else{
-            Log.d("DEBUGGING", "comment inserted at: " + result);
-        }
+        RemoteDatabaseConnection.InsertResult result =
+                database.executeInsert("Entries", new String[]{"ScrapbookID","Timestamp","Caption"},
+                        new Object[]{scrapbookID, entry.getTimeStamp(), entry.getCaption()});
+        Log.d("DEBUGGING:", "Entry Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
     private void createTag(Tag tag, long scrapbookID) {
-        // insert tag into Tags table
-        ContentValues tagValues = new ContentValues();
-        tagValues.put(COLUMN_TAG_NAME,tag.getName());
-        tagValues.put(COLUMN_TAG_HIDDEN, (tag.isHidden() ? 1 : 0)); // true = 1, false = 0
-        long result = database.insert("Tags",null,tagValues);
+        //Create a new Tag in the Tags table, in case it doesn't exist
+        RemoteDatabaseConnection.InsertResult tagCreateResult =
+                database.executeInsert("Tags", new String[]{"TagName","Hidden"},
+                        new Object[]{tag.getName(), tag.isHidden()});
+        Log.d("DEBUGGING:", "Tag Insert Result: " + tagCreateResult.isSuccessful() + " Generated Key: " + tagCreateResult.getGeneratedID());
 
-        // insert tag and scrapbook into ScrapbookTags
-        ContentValues scTagValues = new ContentValues();
-        scTagValues.put(COLUMN_SCRAPBOOK_ID, scrapbookID);
-        scTagValues.put(COLUMN_TAG_NAME,tag.getName());
-        long result2 = database.insert("ScrapbookTags",null,scTagValues);
+        //Create a new association between this Tag and the Scrapbook in the ScrapbookTags table
+        RemoteDatabaseConnection.InsertResult tagAssociateResult =
+                database.executeInsert("ScrapbookTags", new String[]{"ScrapbookID","TagName"},
+                        new Object[]{scrapbookID, tag.getName()});
+        Log.d("DEBUGGING:", "ScrapbookTag Insert Result: " + tagAssociateResult.isSuccessful() + " Generated Key: " + tagAssociateResult.getGeneratedID());
     }
 
     @Override
     public void createComment(Comment comment, long scrapbookID, Long parentCommentID) {
-        ContentValues commentValues = new ContentValues();
-        commentValues.put(COLUMN_COMMENT_ID,comment.getID());
-        commentValues.put(COLUMN_USER_ID,comment.getAuthor().getId());
-        commentValues.put(COLUMN_SCRAPBOOK_ID,scrapbookID);
-        commentValues.put(COLUMN_COMMENT_TEXT,comment.getContent());
-        commentValues.put(COLUMN_TIMESTAMP,comment.getTimeStamp());
-        commentValues.put(COLUMN_PARENT_COMMENT_ID, parentCommentID);
-        long result = database.insert("Comments",null,commentValues);
-        if(result < 0){
-            Log.d("DEBUGGING", "Error inserting comment!");
-        }else{
-            Log.d("DEBUGGING", "comment inserted at: " + result);
-        }
+        RemoteDatabaseConnection.InsertResult result =
+                database.executeInsert("Comments",
+                        new String[]{"UserID","ScrapbookID","CommentText","Timestamp","ParentCommentID"},
+                        new Object[]{comment.getAuthor().getId(),scrapbookID,comment.getContent(),comment.getTimeStamp(),
+                            parentCommentID});
+        Log.d("DEBUGGING:", "Tag Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
     @Override
