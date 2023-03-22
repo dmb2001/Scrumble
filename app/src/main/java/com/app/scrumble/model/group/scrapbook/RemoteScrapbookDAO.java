@@ -347,40 +347,45 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         String whereClause = "";
         LinkedList<Object> uids = new LinkedList<>(); // params for query
 
-        for (User u : users) {
-            if (whereClause.isEmpty()) {
-                whereClause = "UserID = ?";
+        if (!users.isEmpty()) {
+            for (User u : users) {
+                if (whereClause.isEmpty()) {
+                    whereClause = "UserID = ?";
+                } else {
+                    whereClause += " OR UserID = ?";
+                }
+
+                uids.add(u.getId()); // add userids to params
+            }
+
+            // add limit to end of params
+            uids.add(limit);
+
+            // execute query
+            List<Map<String, Object>> q = database.executeRawQuery(
+                    "SELECT ScrapbookID FROM Scrapbooks" +
+                            " WHERE " + whereClause +
+                            " ORDER BY Timestamp DESC" +
+                            " LIMIT ?;"
+                    , uids.toArray());
+
+            if (q.size() > 0) {
+                List<Scrapbook> scrapbooks = new ArrayList<>();
+
+                for (Map<String, Object> row : q) {
+                    long id = (long) row.get("ScrapbookID");
+                    Scrapbook scrapbook = queryScrapbookByID(id);
+                    scrapbooks.add(scrapbook);
+                }
+
+                return scrapbooks;
+
             } else {
-                whereClause += " OR UserID = ?";
+                return new ArrayList<>();
             }
-
-            uids.add(u.getId()); // add userids to params
+        } else {
+            return new ArrayList<>();
         }
-
-        // add limit to end of params
-        uids.add(limit);
-
-        // execute query
-        List<Map<String, Object>> q = database.executeRawQuery(
-                "SELECT ScrapbookID FROM Scrapbooks" +
-                        " WHERE " + whereClause +
-                        " ORDER BY Timestamp DESC" +
-                        " LIMIT ?;"
-        , uids.toArray());
-
-        if (q.size() > 0) {
-            List<Scrapbook> scrapbooks = new ArrayList<>();
-
-            for (Map<String,Object> row : q) {
-                long id = (long) row.get("ScrapbookID");
-                Scrapbook scrapbook = queryScrapbookByID(id);
-                scrapbooks.add(scrapbook);
-            }
-
-            return scrapbooks;
-        }
-
-        return null;
     }
 
     @Override
