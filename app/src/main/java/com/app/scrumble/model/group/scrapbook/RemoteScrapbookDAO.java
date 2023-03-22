@@ -110,7 +110,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
             for(Map.Entry<String,Object> entry : row.entrySet()){
                 if(entry.getKey().equals("UserID")){
-                    long userID = (long) entry.getValue();
+                    long userID = (long) (int)entry.getValue();
                     author = userDAO.queryUserByID(userID);
                 } else if (entry.getKey().equals("Likes")){
                     likes = (int) entry.getValue();
@@ -156,7 +156,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     private Set<Tag> queryScrapbookTagsByScrapbookID(long scrapbookID) {
         List<Map<String,Object>> results = database.executeRawQuery(
-                "SELECT Tags.TagName, Tags.Hidden FROM Tags, ScrapbookTags " +
+                "SELECT Tags.TagName, Tags.TagHidden FROM Tags, ScrapbookTags " +
                         "WHERE ScrapbookID = ? AND Tags.TagName = ScrapbookTags.TagName", new Object[]{scrapbookID});
 
         //If no tags were found, return empty hashset.
@@ -230,7 +230,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 }else if(entry.getKey().equals("Title")){
                     scrapBookBuilder.withTitle((String) entry.getValue());
                 }else if(entry.getKey().equals("Timestamp")){
-                    scrapBookBuilder.withTimeStamp(((Integer) entry.getValue()).longValue());
+                    scrapBookBuilder.withTimeStamp((long) entry.getValue());
                 }else if(entry.getKey().equals("Latitude")){
                     latitude = (Double) entry.getValue();
                 }else if(entry.getKey().equals("Longitude")){
