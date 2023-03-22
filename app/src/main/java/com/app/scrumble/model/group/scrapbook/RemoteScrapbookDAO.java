@@ -236,7 +236,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 }else if(entry.getKey().equals("Longitude")){
                     longitude = (Double) entry.getValue();
                 }else if(entry.getKey().equals("UserID")){
-                    userBuilder.withID((Long) entry.getValue());
+                    userBuilder.withID(new Long((int)entry.getValue()));
                 }else if(entry.getKey().equals("Name")){
                     userBuilder.withName((String) entry.getValue());
                 }else if(entry.getKey().equals("EmailAddress")){
