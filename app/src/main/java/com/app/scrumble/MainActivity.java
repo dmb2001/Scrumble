@@ -39,29 +39,6 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final long SCRAPBOOK_1_ID = 1;
-    public static final long SCRAPBOOK_2_ID = 2;
-    public static final long SCRAPBOOK_3_ID = 3;
-    public static final String TAG_EDINBURGH = "Edinburgh";
-    public static final String TAG_TRAVEL = "Travel";
-    public static final String TAG_MEMORIES = "Memories";
-
-    public static final long SCRAPBOOK_FOODIE_1_ID = 4;
-    public static final long SCRAPBOOK_FOODIE_2_ID = 5;
-    public static final long SCRAPBOOK_FOODIE_3_ID = 6;
-    public static final String TAG_FOODIE = "Foodie";
-
-    public static final long SCRAPBOOK_ADVENTURE_1_ID = 7;
-    public static final long SCRAPBOOK_ADVENTURE_2_ID = 8;
-    public static final String TAG_ADVENTURE = "Adventure";
-
-    public static final long SCRAPBOOK_LANDMARKS_1_ID = 9;
-    public static final long SCRAPBOOK_LANDMARKS_2_ID = 10;
-    public static final long SCRAPBOOK_LANDMARKS_3_ID = 11;
-    public static final String TAG_LANDMARKS = "Landmarks";
-
-    private static final String CAPTION = "Lorem ipsum dolor sit amet. Ut voluptatem maxime aut assumenda incidunt qui fuga pariatur sed consectetur dolore est molestiae odio et corrupti quidem. Et accusamus sapiente eum repellendus voluptatem rem aperiam repellendus non fuga quia. Est nobis eaque ut placeat quas nam voluptatem cupiditate aut expedita eligendi.";
-
     private List<Scrapbook> scrapbooks = new ArrayList<>();
     private List<User> users = new ArrayList<>();
 
