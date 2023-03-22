@@ -23,7 +23,9 @@ import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
 import com.app.scrumble.model.group.Group;
+import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User;
+import com.app.scrumble.model.user.User.UserBuilder;
 import com.app.scrumble.model.user.UserDAO;
 
 import java.util.ArrayList;
@@ -228,8 +230,55 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public Set<Scrapbook> queryScrapbooksByLocation(Location start, long maxDistance) {
-        //TODO Dean said he's 90% finished with his own implementation.
-        return null;
+        //param order: latitude, latitude, longitude, radius
+        double radiusKm = maxDistance / 1000.0;
+        String sql = "SELECT Scrapbooks.*, Users.* " +
+                "FROM Scrapbooks " +
+                "JOIN Users ON Scrapbooks.UserID = Users.UserID " +
+                "WHERE 6371 * 2 * ASIN(SQRT(" +
+                "    POWER(SIN((Scrapbooks.Latitude - ?) * PI() / 180 / 2), 2) + " +
+                "    COS(Scrapbooks.Latitude * PI() / 180) * COS(? * PI() / 180) * " +
+                "    POWER(SIN((Scrapbooks.Longitude - ?) * PI() / 180 / 2), 2) " +
+                ")) <= ?";
+        List<Map<String, Object>> rows = database.executeRawQuery(sql, new Object[]{start.getLatitude(), start.getLatitude(), start.getLongitude(), radiusKm});
+        Set<Scrapbook> scrapbooks = new HashSet<>();
+        Double latitude = null;
+        Double longitude = null;
+        for(Map<String,Object> row : rows){
+            ScrapBookBuilder scrapBookBuilder = new ScrapBookBuilder();
+            UserBuilder userBuilder = new UserBuilder();
+            for(Map.Entry<String, Object> entry : row.entrySet()){
+                if(entry.getKey().equals("ScrapbookID")){
+                    scrapBookBuilder.withID((Long) entry.getValue());
+                }else if(entry.getKey().equals("Title")){
+                    scrapBookBuilder.withTitle((String) entry.getValue());
+                }else if(entry.getKey().equals("Timestamp")){
+                    scrapBookBuilder.withTimeStamp((Long) entry.getValue());
+                }else if(entry.getKey().equals("Latitude")){
+                    latitude = (Double) entry.getValue();
+                }else if(entry.getKey().equals("Longitude")){
+                    longitude = (Double) entry.getValue();
+                }else if(entry.getKey().equals("UserID")){
+                    userBuilder.withID((Long) entry.getValue());
+                }else if(entry.getKey().equals("Name")){
+                    userBuilder.withName((String) entry.getValue());
+                }else if(entry.getKey().equals("EmailAddress")){
+                    userBuilder.withEmail((String) entry.getValue());
+                }else if(entry.getKey().equals("Password")){
+                    userBuilder.withPassword((String) entry.getValue());
+                }else if(entry.getKey().equals("TypeUser")){
+                    String storedType = (String) entry.getValue();
+                    if(storedType.equals("User")){
+                        userBuilder.withUserType(User.TYPE_USER);
+                    }else {
+                        userBuilder.withUserType(User.TYPE_ADMIN);
+                    }
+                }
+            }
+            scrapBookBuilder.withLocation(new Location(latitude, longitude)).withOwner(userBuilder.build());
+            scrapbooks.add(scrapBookBuilder.build());
+        }
+        return scrapbooks;
     }
 
     @Override
