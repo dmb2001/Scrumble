@@ -20,7 +20,7 @@ public class RemoteUserDAO implements UserDAO{
 
     @Override
     public void create(User user) {
-        InsertResult result = database.executeInsert("Users", new String[]{"Name","EmailAddress","Password","TypeUser"}, new Object[]{user.getName(), user.getEmail(), user.getPassword(), "User"});
+        InsertResult result = database.executeInsert("Users", new String[]{"Name","Username","EmailAddress","Password","TypeUser"}, new Object[]{user.getName(), user.getUsername(),user.getEmail(), user.getPassword(), "User"});
         user.setUniqueID(result.getGeneratedID());
         Log.d("DEBUGGING", "insert result: " + result.isSuccessful() + " generated key: " + result.getGeneratedID());
     }
