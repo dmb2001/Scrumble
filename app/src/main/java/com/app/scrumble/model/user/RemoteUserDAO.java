@@ -4,11 +4,16 @@ import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
 import com.app.scrumble.model.RemoteDatabaseConnection.InsertResult;
+import com.app.scrumble.model.group.scrapbook.Location;
+import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User.UserBuilder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class RemoteUserDAO implements UserDAO{
 
