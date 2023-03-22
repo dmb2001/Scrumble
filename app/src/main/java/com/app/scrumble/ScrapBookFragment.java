@@ -155,7 +155,8 @@ public class ScrapBookFragment extends BaseFragment {
         }
 
         //Populate group-related content
-        List<Group> relatedGroups = getGroupDAO().queryGroupsContainingScrapbookID(scrapbook.getID());
+        //List<Group> relatedGroups = getGroupDAO().queryGroupsContainingScrapbookID(scrapbook.getID()); TODO: Must do networking in background thread, so null for now
+        List<Group> relatedGroups = null;
 
         if (relatedGroups == null) {
             seeGroupsButton.setVisibility(View.INVISIBLE);
