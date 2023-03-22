@@ -37,6 +37,10 @@ public class Scrapbook {
         return ID;
     }
 
+    public void setID(long ID){
+        this.ID = ID;
+    }
+
     public List<Entry> getEntries() {
         return entries;
     }

@@ -300,6 +300,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             }
         }
 
+        scrapbook.setID(result.getGeneratedID());
         Log.d("DEBUGGING", "Scrapbook Insert Result: " + result.isSuccessful() + " Generated Key: " + result.getGeneratedID());
     }
 
