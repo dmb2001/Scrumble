@@ -154,64 +154,76 @@ public class ScrapBookFragment extends BaseFragment {
             carousel.setAdapter(new CarouselAdapter(scrapbook));
         }
 
-        //Populate group-related content
-        //List<Group> relatedGroups = getGroupDAO().queryGroupsContainingScrapbookID(scrapbook.getID()); TODO: Must do networking in background thread, so null for now
-        List<Group> relatedGroups = null;
+        runInBackground(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        //Populate group-related content
+                        List<Group> relatedGroups = getGroupDAO().queryGroupsContainingScrapbookID(scrapbook.getID());
+                        runOnUIThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              if (relatedGroups == null) {
+                                                  seeGroupsButton.setVisibility(View.INVISIBLE);
+                                                  noGroupText.setVisibility(View.VISIBLE);
+                                              } else {
+                                                  seeGroupsButton.setVisibility(View.VISIBLE);
+                                                  noGroupText.setVisibility(View.INVISIBLE);
 
-        if (relatedGroups == null) {
-            seeGroupsButton.setVisibility(View.INVISIBLE);
-            noGroupText.setVisibility(View.VISIBLE);
-        } else {
-            seeGroupsButton.setVisibility(View.VISIBLE);
-            noGroupText.setVisibility(View.INVISIBLE);
+                                                  seeGroupsButton.setOnClickListener(
+                                                          new OnClickListener() {
+                                                              @Override
+                                                              public void onClick(View view) {
+                                                                  final Group[] selectedGroup = {null}; //Initialize a variable for a group selected from the list
 
-            seeGroupsButton.setOnClickListener(
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            final Group[] selectedGroup = {null}; //Initialize a variable for a group selected from the list
+                                                                  //Go through every group and put its name into the groupNames array
+                                                                  String[] groupNames = new String[relatedGroups.size()];
 
-                            //Go through every group and put its name into the groupNames array
-                            String[] groupNames = new String[relatedGroups.size()];
+                                                                  for (int i = 0; i < relatedGroups.size(); i++) {
+                                                                      groupNames[i] = relatedGroups.get(i).getName();
+                                                                  }
 
-                            for (int i = 0; i < relatedGroups.size(); i++) {
-                                groupNames[i] = relatedGroups.get(i).getName();
-                            }
+                                                                  Log.d("DEBUGGING:","Acquired "+Integer.toString(relatedGroups.size())+" Groups!");
 
-                            Log.d("DEBUGGING:","Acquired "+Integer.toString(relatedGroups.size())+" Groups!");
+                                                                  Log.d("DEBUGGING:", "Creating Scrapbook Groups popup!");
 
-                            Log.d("DEBUGGING:", "Creating Scrapbook Groups popup!");
+                                                                  AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                            builder.setTitle("Press on a Group's Name to see its Information")
-                                    .setItems(groupNames, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                selectedGroup[0] = relatedGroups.get(i);
-                                                Log.d("DEBUGGING:","Pressed on "+selectedGroup[0].getName()+"!");
-                                                showAsMainContent(
-                                                        GroupFragment.newInstance(selectedGroup[0].getID())
-                                                ,true);
+                                                                  builder.setTitle("Press on a Group's Name to see its Information")
+                                                                          .setItems(groupNames, new DialogInterface.OnClickListener() {
+                                                                              @Override
+                                                                              public void onClick(DialogInterface dialogInterface, int i) {
+                                                                                  selectedGroup[0] = relatedGroups.get(i);
+                                                                                  Log.d("DEBUGGING:","Pressed on "+selectedGroup[0].getName()+"!");
+                                                                                  showAsMainContent(
+                                                                                          GroupFragment.newInstance(selectedGroup[0].getID())
+                                                                                          ,true);
 
 
 
-                                        }
-                                    }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                                              }
+                                                                          }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                                      @Override
+                                                                                      public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                }
-                                            }
-                                    );
+                                                                                      }
+                                                                                  }
+                                                                          );
 
-                            Dialog groupsDialog = builder.create();
-                            groupsDialog.show();
-                        }
+                                                                  Dialog groupsDialog = builder.create();
+                                                                  groupsDialog.show();
+                                                              }
+                                                          }
+                                                  );
+
+                                              }
+                                          }
+                                      }
+
+                        );
                     }
-            );
-
-        }
+                }
+        );
     }
 
     @Override

@@ -81,7 +81,7 @@ public class RemoteGroupDAO implements GroupDAO {
         for (Map<String,Object> row : results) {
             for(Map.Entry<String,Object> entry : row.entrySet()){
                 if(entry.getKey().equals("GroupID")){
-                    long groupID = (long) entry.getValue();
+                    long groupID = (long) (int) entry.getValue();
                     groups.add(queryGroupByID(groupID));
                 }
             }
@@ -106,11 +106,11 @@ public class RemoteGroupDAO implements GroupDAO {
 
             for(Map.Entry<String,Object> entry : groupData.entrySet()){
                 if(entry.getKey().equals("GroupID")){
-                    groupID = (long) entry.getValue();
+                    groupID = (long) (int) entry.getValue();
                 }else if(entry.getKey().equals("GroupName")){
                     groupName = (String) entry.getValue();
                 }else if(entry.getKey().equals("GroupOwnerID")){
-                    groupOwnerID = (long) entry.getValue();
+                    groupOwnerID = (long) (int) entry.getValue();
                     groupOwner = userDAO.queryUserByID(groupOwnerID);
                 }
             }
@@ -164,7 +164,7 @@ public class RemoteGroupDAO implements GroupDAO {
         for (Map<String,Object> row : results) {
             for(Map.Entry<String,Object> entry : row.entrySet()){
                 if(entry.getKey().equals("UserID")){
-                    long userID = (long) entry.getValue();
+                    long userID = (long) (int) entry.getValue();
                     groupMembers.add(userDAO.queryUserByID(userID));
                 }
             }
@@ -221,7 +221,7 @@ public class RemoteGroupDAO implements GroupDAO {
         for (Map<String,Object> row : results) {
             for(Map.Entry<String,Object> entry : row.entrySet()){
                 if(entry.getKey().equals("GroupID")){
-                    long groupID = (long) entry.getValue();
+                    long groupID = (long) (int)entry.getValue();
                     resultGroups.add(queryGroupByID(groupID));
                 }
             }
