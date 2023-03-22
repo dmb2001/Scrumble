@@ -4,16 +4,11 @@ import android.util.Log;
 
 import com.app.scrumble.model.RemoteDatabaseConnection;
 import com.app.scrumble.model.RemoteDatabaseConnection.InsertResult;
-import com.app.scrumble.model.group.scrapbook.Location;
-import com.app.scrumble.model.group.scrapbook.Scrapbook;
-import com.app.scrumble.model.group.scrapbook.Scrapbook.ScrapBookBuilder;
 import com.app.scrumble.model.user.User.UserBuilder;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class RemoteUserDAO implements UserDAO{
 
@@ -26,6 +21,7 @@ public class RemoteUserDAO implements UserDAO{
     @Override
     public void create(User user) {
         InsertResult result = database.executeInsert("Users", new String[]{"Name","EmailAddress","Password","TypeUser"}, new Object[]{user.getName(), user.getEmail(), user.getPassword(), "User"});
+        user.setUniqueID(result.getGeneratedID());
         Log.d("DEBUGGING", "insert result: " + result.isSuccessful() + " generated key: " + result.getGeneratedID());
     }
 

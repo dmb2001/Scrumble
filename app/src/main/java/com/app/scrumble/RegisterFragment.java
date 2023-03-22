@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.app.scrumble.model.user.User;
+import com.app.scrumble.model.user.User.UserBuilder;
 
 import java.util.UUID;
 
@@ -61,7 +62,14 @@ public class RegisterFragment extends BaseFragment{
                         }else if(!agreementSwitch.isChecked()){
                             Toast.makeText(getContext(), "you must agree to the Scrumble end user agreement", Toast.LENGTH_SHORT).show();
                         }else{
-                            User newUser = new User(nameInput.getText().toString().trim(), emailInput.getText().toString().trim(), passwordInput.getText().toString().trim(), usernameInput.getText().toString().trim(), newUserID, User.TYPE_USER);
+                            User newUser = new UserBuilder()
+                                    .withName(nameInput.getText().toString().trim())
+                                    .withEmail(emailInput.getText().toString().trim())
+                                    .withPassword(passwordInput.getText().toString().trim())
+                                    .withUsername(usernameInput.getText().toString().trim())
+                                    .withUserType(User.TYPE_USER)
+                                    .build();
+
                             runInBackground(
                                     new Runnable() {
                                         @Override

@@ -38,6 +38,10 @@ public class User {
 
     public long getUserType() { return userType; }
 
+    public void setUniqueID(long uniqueID){
+        this.id = uniqueID;
+    }
+
     @Override
     public String toString() {
         return username;
