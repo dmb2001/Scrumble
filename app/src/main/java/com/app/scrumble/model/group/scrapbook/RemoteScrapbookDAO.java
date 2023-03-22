@@ -288,6 +288,8 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                                 scrapbook.getLocation().getLongitude()});
 
 
+        scrapbook.setID(result.getGeneratedID());
+
         if(scrapbook.getEntries() != null){
             for (Entry entry : scrapbook.getEntries()){
                 createEntry(entry, scrapbook.getID());
@@ -321,15 +323,15 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
     private void createTag(Tag tag, long scrapbookID) {
         //Create a new Tag in the Tags table, in case it doesn't exist
         RemoteDatabaseConnection.InsertResult tagCreateResult =
-                database.executeInsert("Tags", new String[]{"TagName","Hidden"},
+                database.executeInsert("Tags", new String[]{"TagName","TagHidden"},
                         new Object[]{tag.getName(), tag.isHidden()});
-        Log.d("DEBUGGING:", "Tag Insert Result: " + tagCreateResult.isSuccessful() + " Generated Key: " + tagCreateResult.getGeneratedID());
+        Log.d("DEBUGGING:", "Tag Insert Result: " + tagCreateResult.isSuccessful());
 
         //Create a new association between this Tag and the Scrapbook in the ScrapbookTags table
         RemoteDatabaseConnection.InsertResult tagAssociateResult =
                 database.executeInsert("ScrapbookTags", new String[]{"ScrapbookID","TagName"},
                         new Object[]{scrapbookID, tag.getName()});
-        Log.d("DEBUGGING:", "ScrapbookTag Insert Result: " + tagAssociateResult.isSuccessful() + " Generated Key: " + tagAssociateResult.getGeneratedID());
+        Log.d("DEBUGGING:", "ScrapbookTag Insert Result: " + tagAssociateResult.isSuccessful());
     }
 
     @Override

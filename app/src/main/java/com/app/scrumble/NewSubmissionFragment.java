@@ -159,7 +159,7 @@ public class NewSubmissionFragment extends BaseFragment{
 
                                                 //Go through all selected groups, and use the groupDAO to associate the scrapbook with them
                                                 for (int i = 0; i < selectedGroups.size(); i++) {
-                                                    getGroupDAO().postToGroup(uniqueID,selectedGroups.get(0).getID());
+                                                    getGroupDAO().postToGroup(scrapbook.getID(),selectedGroups.get(0).getID());
                                                 }
 
                                                 runOnUIThread(new Runnable() {
@@ -260,61 +260,72 @@ public class NewSubmissionFragment extends BaseFragment{
 
         addToGroupButton = parentLayout.findViewById(R.id.button_add_to_group);
 
-//        List<com.app.scrumble.model.group.Group> userGroups = getGroupDAO().queryUserGroups(getCurrentUser().getId());//TODO this needs to run in the background or it will crash, setting it to null temporarliity
-        List<com.app.scrumble.model.group.Group> userGroups = null;
+        runInBackground(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<com.app.scrumble.model.group.Group> userGroups = getGroupDAO().queryUserGroups(getCurrentUser().getId());//TODO this needs to run in the background or it will crash, setting it to null temporarliity
 
-        //If the user is not part of any groups(i.e. userGroups == null),
-        //do not show the button for adding the Scrapbook to groups
-        if (userGroups == null) {
-            addToGroupButton.setVisibility(View.INVISIBLE);
-        } else {
-            addToGroupButton.setVisibility(View.VISIBLE);
-        }
-
-        addToGroupButton.setOnClickListener(
-                new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        Log.d("DEBUGGING:", "Creating Group Addition popup!");
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                        String[] groupNames = new String[userGroups.size()];
-
-                        //Go through every group and put its name into the groupNames array
-                        for (int i = 0; i < userGroups.size(); i++) {
-                            groupNames[i] = userGroups.get(i).getName();
-                        }
-
-                        builder.setTitle("Post Scrapbook to Group(s)")
-                                .setMultiChoiceItems(groupNames, null, new DialogInterface.OnMultiChoiceClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                                if (b == true) {
-                                                    selectedGroups.add(userGroups.get(i));
-                                                } else {
-                                                    selectedGroups.remove(userGroups.get(i));
-                                                }
-                                            }
-                                        }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                            }
-                                        }
-                                )
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                runOnUIThread(new Runnable() {
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        selectedGroups.clear();
+                                    public void run() {
+                                        //If the user is not part of any groups(i.e. userGroups == null),
+                                        //do not show the button for adding the Scrapbook to groups
+                                        if (userGroups == null) {
+                                            addToGroupButton.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            addToGroupButton.setVisibility(View.VISIBLE);
+                                        }
+
+                                        addToGroupButton.setOnClickListener(
+                                                new OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                        Log.d("DEBUGGING:", "Creating Group Addition popup!");
+
+                                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                                                        String[] groupNames = new String[userGroups.size()];
+
+                                                        //Go through every group and put its name into the groupNames array
+                                                        for (int i = 0; i < userGroups.size(); i++) {
+                                                            groupNames[i] = userGroups.get(i).getName();
+                                                        }
+
+                                                        builder.setTitle("Post Scrapbook to Group(s)")
+                                                                .setMultiChoiceItems(groupNames, null, new DialogInterface.OnMultiChoiceClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                                                        if (b == true) {
+                                                                            selectedGroups.add(userGroups.get(i));
+                                                                        } else {
+                                                                            selectedGroups.remove(userGroups.get(i));
+                                                                        }
+                                                                    }
+                                                                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                                            }
+                                                                        }
+                                                                )
+                                                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                        selectedGroups.clear();
+                                                                    }
+                                                                });
+
+                                                        Dialog groupDialog = builder.create();
+                                                        groupDialog.show();
+                                                    }
+                                                }
+                                        );
                                     }
                                 });
 
-                        Dialog groupDialog = builder.create();
-                        groupDialog.show();
-                    }
-                }
+                            }
+                        }
         );
 
         memoryCarousel = parentLayout.findViewById(R.id.memory_carousel);
