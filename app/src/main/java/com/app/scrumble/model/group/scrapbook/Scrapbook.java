@@ -75,7 +75,7 @@ public class Scrapbook {
     }
 
     public int getEntryCount() {
-        return entries = null ? 0 : entries.size();
+        return entries == null ? 0 : entries.size();
     }
 
     public int getReactionCount(){
