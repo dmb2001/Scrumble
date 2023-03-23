@@ -188,7 +188,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             for(Map.Entry<String,Object> entry : row.entrySet()){
                 if(entry.getKey().equals("TagName")){
                     tagName = (String) entry.getValue();
-                } else if (entry.getKey().equals("Hidden")){
+                } else if (entry.getKey().equals("TagHidden")){
                     tagHidden = (int) entry.getValue() == 1;
                 }
             }
