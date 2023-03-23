@@ -54,6 +54,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     private static final String KEY_LAST_KNOWN_LAT = "KEY_LAST_KNOWN_LAT";
     private static final String KEY_LAST_KNOWN_LONG = "KEY_LAST_KNOWN_LONG";
 
+    ImageButton profileButton;
+
     private MapView mapView;
 
     private LocationManager locationManager;
@@ -113,6 +115,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
             }
         });
         ImageButton postButton = parentLayout.findViewById(R.id.button_new_post);
+
         postButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +126,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                 }
             }
         });
-        ImageButton profileButton = parentLayout.findViewById(R.id.button_nav_profile);
+        profileButton = parentLayout.findViewById(R.id.button_nav_profile);
         profileButton.setOnClickListener(
                 new OnClickListener() {
                     @Override
@@ -134,6 +137,19 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     }
                 }
         );
+        if(getCurrentUser() != null){
+            loadProfilePic();
+        }
+
+        profileButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(isSafe() && getCurrentUser() != null){
+                    loadProfilePic();
+                }
+            }
+        }, 2000);
+
         ImageButton settingsButton = parentLayout.findViewById(R.id.button_nav_settings);
         settingsButton.setOnClickListener(
                 new OnClickListener() {
@@ -146,6 +162,19 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                 }
         );
         return parentLayout;
+    }
+
+    private void loadProfilePic(){
+        String URL = URLStringBuilder.buildProfilePictureLocation(getCurrentUser().getId());
+        Glide
+                .with(getContext())
+                .load(Uri.parse(URL))
+                .centerCrop()
+                .circleCrop()
+                .fallback(R.drawable.ic_blank_profile_pic_grey_background)
+                .error(R.drawable.ic_blank_profile_pic_grey_background)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .into(profileButton);
     }
 
     @Override
@@ -300,11 +329,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         );
     }
 
-    private int getMarkerWidth(int height) {
-        int width = (height * 5) / 4;
-        return width;
-    }
-
     private BitmapDescriptor getCustomMarker(Scrapbook scrapbook){
 
         // Inflate the ViewGroup from a layout XML file
@@ -319,18 +343,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         // Measure and layout the ViewGroup
         viewGroup.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         viewGroup.layout(0, 0, viewGroup.getMeasuredWidth(), viewGroup.getMeasuredHeight());
-
-        ImageView thumbnail = viewGroup.findViewById(R.id.thumbnail);
-
-        Glide
-                .with(getContext())
-                .load(Uri.parse(URLStringBuilder.buildProfilePictureLocation(scrapbook.getOwner().getId())))
-                .centerCrop()
-                .circleCrop()
-                .fallback(R.drawable.ic_blank_profile_pic_grey_background)
-                .error(R.drawable.ic_blank_profile_pic_grey_background)
-                .format(DecodeFormat.PREFER_RGB_565)
-                .into(thumbnail);
 
         // Create a Bitmap with the same dimensions as the ViewGroup
         Bitmap bitmap = Bitmap.createBitmap(viewGroup.getWidth(), viewGroup.getHeight(), Bitmap.Config.ARGB_8888);
