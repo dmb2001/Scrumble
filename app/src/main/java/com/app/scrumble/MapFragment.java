@@ -3,9 +3,11 @@ package com.app.scrumble;
 import static android.content.Context.LOCATION_SERVICE;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +15,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.request.FutureTarget;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
@@ -28,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -37,6 +45,7 @@ import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnCameraIdleListener, OnMapLongClickListener, OnMarkerClickListener, OnCameraMoveStartedListener {
 
@@ -55,7 +64,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     private boolean followUser = true;
 
     private static final float DEFAULT_ZOOM = 16.0f;
-    private BitmapDescriptor meMarker;
 
     public static MapFragment newInstance() {
         Bundle args = new Bundle();
@@ -273,6 +281,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                                                         options.position(new LatLng(scrapbook.getLocation().getLatitude(), scrapbook.getLocation().getLongitude()));
                                                         options.title(scrapbook.getTitle());
                                                         options.draggable(false);
+                                                        options.icon(getCustomMarker(scrapbook));
                                                         Marker newMarker = map.addMarker(options);
                                                         if(newMarker != null){
                                                             newMarker.setTag(scrapbook.getID());
@@ -291,7 +300,49 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
         );
     }
 
-    private Bitmap getCustomMarker(Scrapbook scrapbook){
+    private int getMarkerWidth(int height) {
+        int width = (height * 5) / 4;
+        return width;
+    }
+
+    private BitmapDescriptor getCustomMarker(Scrapbook scrapbook){
+
+        // Inflate the ViewGroup from a layout XML file
+        ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.marker_custom, null);
+
+        // Set the width and height of the ViewGroup
+        int height = 145;
+        int width = 145;
+
+        viewGroup.setLayoutParams(new ViewGroup.LayoutParams(width, height));
+
+        // Measure and layout the ViewGroup
+        viewGroup.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        viewGroup.layout(0, 0, viewGroup.getMeasuredWidth(), viewGroup.getMeasuredHeight());
+
+        ImageView thumbnail = viewGroup.findViewById(R.id.thumbnail);
+
+        Glide
+                .with(getContext())
+                .load(Uri.parse(URLStringBuilder.buildProfilePictureLocation(scrapbook.getOwner().getId())))
+                .centerCrop()
+                .circleCrop()
+                .fallback(R.drawable.ic_blank_profile_pic_grey_background)
+                .error(R.drawable.ic_blank_profile_pic_grey_background)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .into(thumbnail);
+
+        // Create a Bitmap with the same dimensions as the ViewGroup
+        Bitmap bitmap = Bitmap.createBitmap(viewGroup.getWidth(), viewGroup.getHeight(), Bitmap.Config.ARGB_8888);
+
+        // Create a Canvas with the Bitmap
+        Canvas canvas = new Canvas(bitmap);
+
+        // Draw the ViewGroup onto the Canvas
+        viewGroup.draw(canvas);
+
+        // Use the Bitmap as a marker icon
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
 
     }
 

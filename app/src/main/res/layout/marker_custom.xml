@@ -2,55 +2,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colour_primary">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_vertical_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/inverted_triangle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:src="@drawable/inverted_triangle"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/label_username"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"/>-->
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_vertical_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85"/>
-
-    <TextView
-        android:id="@+id/label_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="username"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:padding="5dp"
-        android:background="@drawable/rounded_rectangle_white"
-        />
-
-    <ImageView
-        android:id="@+id/inverted_triangle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/inverted_triangle"
-        app:layout_constraintTop_toBottomOf="@id/label_username"
-        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"/>
-
-    <ImageView
-        android:id="@+id/profile_picture"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/inverted_triangle"
-        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        android:src="@drawable/ic_blank_profile_pic_grey_background"
-        android:layout_marginBottom="8dp"/>
+        android:src="@drawable/ic_pin"
+        android:padding="10dp"
+        android:background="@drawable/circular_background"
+        app:tint="@color/colour_primary"
+        android:layout_marginBottom="8dp"
+        android:elevation="7dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
