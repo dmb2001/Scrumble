@@ -189,7 +189,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
                 if(entry.getKey().equals("TagName")){
                     tagName = (String) entry.getValue();
                 } else if (entry.getKey().equals("Hidden")){
-                    tagHidden = (boolean) entry.getValue();
+                    tagHidden = (int) entry.getValue() == 1;
                 }
             }
 
