@@ -84,4 +84,15 @@
         android:layout_marginTop="24dp"
         android:text="create an account"/>
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_1"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_2"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/logo_svg"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
