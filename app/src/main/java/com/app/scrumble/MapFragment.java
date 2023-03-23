@@ -77,11 +77,11 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        meMarker = bitmapFromVector(R.drawable.baseline_emoji_people_24);
         locationManager = (LocationManager) getActivity().getApplicationContext().getSystemService(LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
+                Log.d("DEBUGGING", "location changed!");
                 LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 if(userLocation == null || com.app.scrumble.model.group.scrapbook.Location.distanceBetween(convert(newLocation), convert(userLocation)) > 3){
                     userLocation = newLocation;
@@ -110,6 +110,9 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
             public void onClick(View view) {
                 if(map != null && userLocation != null){
                     followUser = true;
+                    centerMapOnSelf(true);
+                }else if(map != null){
+                    userLocation = new LatLng(55.911118287663335, -3.3217783900766955);
                     centerMapOnSelf(true);
                 }
             }
