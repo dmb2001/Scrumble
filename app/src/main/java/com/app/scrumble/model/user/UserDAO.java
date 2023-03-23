@@ -41,5 +41,9 @@ public interface UserDAO {
      */
     List<User> getFollowing(User user);
 
+    void follow(long leaderID, long followerID);
+
+    boolean checkIfFollowing(long leaderID, long followerID);
+
 
 }

@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import com.app.scrumble.FeedFragment.FeedItemViewHolder;
 import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Location;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;

@@ -2,6 +2,7 @@ package com.app.scrumble;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -121,6 +122,17 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     public void onClick(View view) {
                         if(getCurrentUser() != null){
                             showAsMainContent(ProfileFragment.newInstance(getCurrentUser().getId()), true);
+                        }
+                    }
+                }
+        );
+        ImageButton settingsButton = parentLayout.findViewById(R.id.button_nav_settings);
+        settingsButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(getCurrentUser() != null){
+                            showAsMainContent(new SettingsFragment(), true);
                         }
                     }
                 }
@@ -277,6 +289,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     }
                 }
         );
+    }
+
+    private Bitmap getCustomMarker(Scrapbook scrapbook){
+
     }
 
     @Override

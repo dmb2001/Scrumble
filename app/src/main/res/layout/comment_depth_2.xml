@@ -49,7 +49,7 @@
         android:layout_height="16dp"
         app:layout_constraintStart_toEndOf="@id/start"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider_bottom"
+        app:layout_constraintTop_toBottomOf="@id/divider_mid"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"/>
 

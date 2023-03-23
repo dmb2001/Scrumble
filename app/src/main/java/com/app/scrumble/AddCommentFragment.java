@@ -82,7 +82,6 @@ public class AddCommentFragment extends BaseFragment{
                                             runOnUIThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(getContext(), "Your comment was successfully submitted!", Toast.LENGTH_SHORT).show();
                                                     popBackStack();
                                                 }
                                             });

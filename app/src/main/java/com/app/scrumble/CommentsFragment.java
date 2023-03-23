@@ -1,5 +1,6 @@
 package com.app.scrumble;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.app.scrumble.model.group.scrapbook.Comment;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,8 @@ public class CommentsFragment extends BaseFragment{
     private LinearLayoutManager layoutManager;
     private CommentsListAdapter adapter;
     private long replyID;
+
+    private TextView noCommentsLabel;
 
     public static CommentsFragment newInstance(long scrapbookID) {
         Bundle args = new Bundle();
@@ -70,6 +75,8 @@ public class CommentsFragment extends BaseFragment{
         commentsList.setLayoutManager(layoutManager);
         commentsList.setAdapter((adapter == null ? (adapter = new CommentsListAdapter()) : adapter));
 
+        noCommentsLabel = parentLayout.findViewById(R.id.label_no_comments);
+
         return parentLayout;
     }
 
@@ -81,6 +88,8 @@ public class CommentsFragment extends BaseFragment{
             Log.d("DEBUGGING", "Comments were empty!");
         }else{
             Log.d("DEBUGGING", "There are: " + orderedComments.size() + " comments");
+            noCommentsLabel.setVisibility(View.INVISIBLE);
+            commentsList.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
         }
     }
@@ -208,6 +217,16 @@ public class CommentsFragment extends BaseFragment{
             if (comment.getChildren() == null || comment.getChildren().size() == 0) {
                 holder.hideShowChildren();
             }
+            String profilePicURL = URLStringBuilder.buildProfilePictureLocation(comment.getAuthor().getId());
+            Glide
+                    .with(getContext())
+                    .load(Uri.parse(profilePicURL))
+                    .centerCrop()
+                    .circleCrop()
+                    .fallback(R.drawable.ic_blank_profile_pic_grey_background)
+                    .error(R.drawable.ic_blank_profile_pic_grey_background)
+                    .format(DecodeFormat.PREFER_RGB_565)
+                    .into(holder.profilePicture);
         }
 
 

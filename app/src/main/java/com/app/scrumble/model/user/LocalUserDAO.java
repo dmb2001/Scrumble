@@ -127,4 +127,14 @@ public class LocalUserDAO implements UserDAO{
 //        userList.add(testUser2);
         return userList;
     }
+
+    @Override
+    public void follow(long leaderID, long followerID) {
+
+    }
+
+    @Override
+    public boolean checkIfFollowing(long leaderID, long followerID) {
+        return false;
+    }
 }

@@ -35,7 +35,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             android:src="@drawable/ic_blank_profile_pic_grey_background"
-            android:layout_marginTop="48dp"/>
+            android:layout_marginTop="48dp"
+            android:clickable="true"/>
 
         <EditText
             android:id="@+id/input_email"

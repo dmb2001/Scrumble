@@ -3,6 +3,7 @@ package com.app.scrumble;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -28,7 +29,11 @@ import com.app.scrumble.model.group.Group;
 import com.app.scrumble.model.group.scrapbook.Entry;
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.app.scrumble.model.group.scrapbook.Tag;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class ScrapBookFragment extends BaseFragment {
@@ -47,9 +52,8 @@ public class ScrapBookFragment extends BaseFragment {
     private TextView noGroupText;
     private Button seeGroupsButton;
 
-    LayoutManager layoutManager;
     RecyclerView carousel;
-
+    CarouselAdapter adapter;
 
     public static ScrapBookFragment newInstance(long scrapbook) {
 
@@ -86,7 +90,13 @@ public class ScrapBookFragment extends BaseFragment {
         );
         tagsField = parentLayout.findViewById(R.id.tags);
         description = parentLayout.findViewById(R.id.description);
+
         carousel = parentLayout.findViewById(R.id.image_carousel);
+        carousel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(carousel);
+        adapter = new CarouselAdapter();
+        carousel.setAdapter(adapter);
 
         //Get group-related views
         noGroupText = parentLayout.findViewById(R.id.text_no_groups);
@@ -112,6 +122,7 @@ public class ScrapBookFragment extends BaseFragment {
                                         public void run() {
                                             if(isSafe()){
                                                 populateContent();
+                                                adapter.notifyDataSetChanged();
                                             }
                                         }
                                     }
@@ -143,16 +154,16 @@ public class ScrapBookFragment extends BaseFragment {
         }
         tagsField.setText("Tags: " + tagsField.getText());
 
-        profilePicture.setImageResource(R.drawable.image_user_pp_3);
-        if (layoutManager == null){
-            layoutManager =
-                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            carousel.setLayoutManager(layoutManager);
-            carousel.setHasFixedSize(true);
-            SnapHelper snapHelper = new PagerSnapHelper();
-            snapHelper.attachToRecyclerView(carousel);
-            carousel.setAdapter(new CarouselAdapter(scrapbook));
-        }
+        String profilePicURL = URLStringBuilder.buildProfilePictureLocation(scrapbook.getOwner().getId());
+        Glide
+                .with(getContext())
+                .load(Uri.parse(profilePicURL))
+                .centerCrop()
+                .circleCrop()
+                .fallback(R.drawable.ic_blank_profile_pic_grey_background)
+                .error(R.drawable.ic_blank_profile_pic_grey_background)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .into(profilePicture);
 
         runInBackground(
                 new Runnable() {
@@ -234,12 +245,6 @@ public class ScrapBookFragment extends BaseFragment {
 
     private class CarouselAdapter extends Adapter<CarouselItemViewHolder> {
 
-        private Scrapbook scrapbook;
-
-        private CarouselAdapter(Scrapbook scrapbook) {
-            this.scrapbook = scrapbook;
-        }
-
         @NonNull
         @Override
         public CarouselItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -249,14 +254,22 @@ public class ScrapBookFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(@NonNull CarouselItemViewHolder holder, int position) {
             Entry entry = scrapbook.getEntries().get(position);
-            holder.image.setImageResource(R.color.cardview_dark_background);
+            String URL = URLStringBuilder.buildMemoryLocation(scrapbook.getOwner().getId(), scrapbook.getID(), entry.getID());
+
+            Glide
+                    .with(getContext())
+                    .load(Uri.parse(URL))
+                    .centerCrop()
+                    .fallback(R.color.cardview_dark_background)
+                    .format(DecodeFormat.PREFER_RGB_565)
+                    .into(holder.image);
 
             holder.image.setOnClickListener(
                     new OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             showAsMainContent(
-                                    EntryFragment.newInstance(scrapbook.getID(), scrapbook.getEntries().get(position).getID()), true);
+                                    EntryFragment.newInstance(scrapbook.getOwner().getId(), scrapbook.getID(), scrapbook.getEntries().get(holder.getAdapterPosition()).getID()), true);
                         }
                     }
             );
@@ -264,7 +277,9 @@ public class ScrapBookFragment extends BaseFragment {
 
         @Override
         public int getItemCount() {
-            return scrapbook.getEntries() == null ? 0 : scrapbook.getEntries().size();
+            int itemCount = (scrapbook == null || scrapbook.getEntries() == null) ? 0 : scrapbook.getEntries().size();
+            Log.d("DEBUGGING", "getting item count of: " + itemCount);
+            return itemCount;
         }
     }
 

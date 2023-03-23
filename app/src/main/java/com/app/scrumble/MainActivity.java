@@ -24,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.app.scrumble.model.ImageUploader;
 import com.app.scrumble.model.group.scrapbook.Comment;
 import com.app.scrumble.model.group.GroupDAO;
 import com.app.scrumble.model.group.scrapbook.Comment;
@@ -129,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
     public final UserDAO getUserDAO(){
         return ((Scrumble)getApplication()).getUserDAO();
+    }
+
+    public final ImageUploader getImageUploader(){
+        return ((Scrumble)getApplication()).getImageUploader();
     }
 
     public final ScrapbookDAO getScrapBookDAO(){

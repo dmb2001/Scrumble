@@ -33,7 +33,7 @@ public class RemoteDatabaseConnection {
      * @throws DatabaseException
      */
     public List<Map<String,Object>> executeQuery(String tableName, String[] columnNames, String whereClause, Object[] params) throws DatabaseException{
-        if(connection == null){
+        if(connectionDead()){
             setUpConnection();
         }
 
@@ -112,7 +112,7 @@ public class RemoteDatabaseConnection {
      * @throws DatabaseException
      */
     public int executeUpdate(String tableName, @NotNull String[] columns, @NotNull Object[] values,  @NonNull String whereClause, @NotNull Object[] params) throws DatabaseException{
-        if (connection == null){
+        if (connectionDead()){
             setUpConnection();
         }
         if(whereClause == null || params == null || params.length == 0){
@@ -164,7 +164,7 @@ public class RemoteDatabaseConnection {
      * @throws DatabaseException
      */
     public int executeDelete(String tableName, String whereClause, Object[] params) throws DatabaseException {
-        if(connection == null){
+        if(connectionDead()){
             setUpConnection();
         }
 
@@ -195,7 +195,7 @@ public class RemoteDatabaseConnection {
      * @throws DatabaseException
      */
     public InsertResult executeInsert(String tableName, String[] columnNames, Object[] values) throws DatabaseException{
-        if(connection == null){
+        if(connectionDead()){
             setUpConnection();
         }
 
@@ -239,7 +239,7 @@ public class RemoteDatabaseConnection {
      * @return a {@link List} of {@link Map} objects representing each row in the result. May be empty, but never null
      */
     public List<Map<String, Object>> executeRawQuery(String sql, Object[] params){
-        if (connection == null){
+        if (connectionDead()){
             setUpConnection();
         }
 
@@ -255,7 +255,21 @@ public class RemoteDatabaseConnection {
         }
     }
 
+    private boolean connectionDead(){
+        try {
+            return connection == null || !connection.isValid(2) || connection.isClosed();
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     private void setUpConnection() throws DatabaseException {
+
+        if(connection != null){
+            try {
+                connection.close();
+            }catch (Exception e){}
+        }
 
         try {
             // Load the JDBC driver

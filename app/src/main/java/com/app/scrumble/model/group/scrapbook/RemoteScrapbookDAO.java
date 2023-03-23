@@ -10,6 +10,8 @@ import com.app.scrumble.model.user.UserDAO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
             } else if (entry.getKey().equals("UserID")){
                 long authorID = new Long((int)entry.getValue());
                 author = userDAO.queryUserByID(authorID);
-            } else if (entry.getKey().equals("CommentText")){
+            } else if (entry.getKey().equals("Comment")){
                 commentText = (String) entry.getValue();
             }
         }
@@ -282,7 +284,7 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
         for (Map<String,Object> row : results) {
             for (Map.Entry<String,Object> entry : row.entrySet()) {
                 if (entry.getKey().equals("ScrapbookID")) {
-                    long scrapbookID = (long) entry.getValue();
+                    long scrapbookID = new Long((int)entry.getValue());
                     Scrapbook newScrapbook = queryScrapbookByID(scrapbookID);
                     scrapbooks.add(newScrapbook);
                 }
@@ -363,48 +365,26 @@ public class RemoteScrapbookDAO implements ScrapbookDAO{
 
     @Override
     public List<Scrapbook> getRecentScrapbooksFor(List<User> users, int limit) {
-        String whereClause = "";
-        LinkedList<Object> uids = new LinkedList<>(); // params for query
 
-        if (!users.isEmpty()) {
-            for (User u : users) {
-                if (whereClause.isEmpty()) {
-                    whereClause = "UserID = ?";
-                } else {
-                    whereClause += " OR UserID = ?";
-                }
+        List<Scrapbook> results = new ArrayList<>();
 
-                uids.add(u.getId()); // add userids to params
+        if (users != null && !users.isEmpty()) {
+            for (User user : users) {
+                results.addAll(queryScrapbooksByUser(user));
             }
-
-            // add limit to end of params
-            uids.add(limit);
-
-            // execute query
-            List<Map<String, Object>> q = database.executeRawQuery(
-                    "SELECT ScrapbookID FROM Scrapbooks" +
-                            " WHERE " + whereClause +
-                            " ORDER BY Timestamp DESC" +
-                            " LIMIT ?;"
-                    , uids.toArray());
-
-            if (q.size() > 0) {
-                List<Scrapbook> scrapbooks = new ArrayList<>();
-
-                for (Map<String, Object> row : q) {
-                    long id = (long) row.get("ScrapbookID");
-                    Scrapbook scrapbook = queryScrapbookByID(id);
-                    scrapbooks.add(scrapbook);
-                }
-
-                return scrapbooks;
-
-            } else {
-                return new ArrayList<>();
-            }
-        } else {
-            return new ArrayList<>();
         }
+        Collections.sort(results, new Comparator<Scrapbook>() {
+            @Override
+            public int compare(Scrapbook firstScrapbook, Scrapbook secondScrapbook) {
+                if (firstScrapbook.getTimestamp() > secondScrapbook.getTimestamp()){
+                    return 1;
+                }else if(firstScrapbook.getTimestamp() == secondScrapbook.getTimestamp()){
+                    return 0;
+                }
+                return -1;
+            }
+        });
+        return results;
     }
 
     @Override

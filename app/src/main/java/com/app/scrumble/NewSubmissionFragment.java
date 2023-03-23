@@ -39,6 +39,7 @@ import com.app.scrumble.model.group.scrapbook.Tag;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -102,7 +103,7 @@ public class NewSubmissionFragment extends BaseFragment{
                         userSelections = new ArrayList<>();
                         for (Uri uri : uris){
                             UserSelection selection = new UserSelection();
-                            selection.entry = new Entry(newUUID(), System.currentTimeMillis(), null);
+                            selection.entry = new Entry(null, System.currentTimeMillis(), null);
                             selection.imageLocation = uri;
                             userSelections.add(selection);
                         }
@@ -126,7 +127,7 @@ public class NewSubmissionFragment extends BaseFragment{
                         }else if(!inputHasBeenProvidedTo(descriptionField)){
                             Toast.makeText(getContext(), "You must enter a description for this scrapbook", Toast.LENGTH_LONG).show();
                         }else if(!aMemoryHasBeenProvided()){
-                            Toast.makeText(getContext(), "You must select at least one memory for this scrapbook", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "You must select at least three memories for this scrapbook", Toast.LENGTH_LONG).show();
                         }else{
                             runInBackground(
                                     new Runnable() {
@@ -162,6 +163,13 @@ public class NewSubmissionFragment extends BaseFragment{
                                                     getGroupDAO().postToGroup(scrapbook.getID(),selectedGroups.get(0).getID());
                                                 }
 
+                                                if(userSelections != null){
+                                                    for (UserSelection selection : userSelections){
+                                                        String objectKey = URLStringBuilder.buildMemoryKey(getCurrentUser().getId(), scrapbook.getID(), selection.entry.getID());
+                                                        getImageUploader().upload(selection.imageLocation, objectKey);
+                                                    }
+                                                }
+
                                                 runOnUIThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -185,10 +193,6 @@ public class NewSubmissionFragment extends BaseFragment{
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // For this example, launch the photo picker and allow the user to choose images
-                        // and videos. If you want the user to select a specific type of media file,
-                        // use the overloaded versions of launch(), as shown in the section about how
-                        // to select a single media item.
                         ActivityResultContracts.PickVisualMedia.VisualMediaType mediaType = (ActivityResultContracts.PickVisualMedia.VisualMediaType) ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE;
                         PickVisualMediaRequest request = new PickVisualMediaRequest.Builder()
                                 .setMediaType(mediaType)
@@ -348,7 +352,7 @@ public class NewSubmissionFragment extends BaseFragment{
     }
 
     private boolean aMemoryHasBeenProvided(){
-        return true;
+        return userSelections != null && userSelections.size() >= 3;
     }
 
     @Override
@@ -376,6 +380,7 @@ public class NewSubmissionFragment extends BaseFragment{
 
         @Override
         public void onBindViewHolder(@NonNull MemoryViewHolder holder, int position) {
+
             UserSelection selection = userSelections.get(position);
             Glide
                     .with(getContext())
@@ -389,7 +394,7 @@ public class NewSubmissionFragment extends BaseFragment{
                 public void onClick(View view) {
                     if(captionEditingControls.getVisibility() == View.INVISIBLE){
                         captionEditingControls.setVisibility(View.VISIBLE);
-                        editing = userSelections.get(position);
+                        editing = userSelections.get(holder.getAdapterPosition());
                         captionInputField.setText(editing.entry.getCaption());
                     }
                 }

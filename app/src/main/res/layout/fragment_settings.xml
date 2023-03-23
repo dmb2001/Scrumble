@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85"/>
+
+    <TextView
+        android:id="@+id/label_settings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:padding="16dp"
+        android:text="Account Settings"
+        android:gravity="center"
+        android:textSize="24sp"/>
+
+    <EditText
+        android:id="@+id/input_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/label_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="email address"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        />
+
+    <EditText
+        android:id="@+id/input_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/input_email"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:hint="name"
+        android:gravity="center"
+        android:inputType="text"
+        android:maxLines="1"
+        />
+
+    <EditText
+        android:id="@+id/input_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/input_name"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:hint="password"
+        android:gravity="center"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        />
+
+    <Button
+        android:id="@+id/button_update_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/input_password"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:layout_marginTop="24dp"
+        android:text="apply changes"/>
+
+    <Button
+        android:id="@+id/button_log_out"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/button_update_details"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:layout_marginTop="24dp"
+        android:text="log out"/>
+
+    <Button
+        android:id="@+id/button_delete_account"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:layout_marginTop="24dp"
+        android:text="delete my account"/>
+
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:id="@+id/account_controls"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:constraint_referenced_ids="input_email,input_name,input_password,button_log_out,button_delete_account"/>-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

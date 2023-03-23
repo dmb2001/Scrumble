@@ -18,6 +18,7 @@
         android:paddingEnd="8dp"
         android:paddingBottom="120dp"
         android:clipToPadding="false"
+        android:visibility="invisible"
         />
 
     <ImageButton
@@ -31,6 +32,13 @@
         android:background="@drawable/circular_background"
         android:elevation="10dp"/>
 
-
+    <TextView
+        android:id="@+id/label_no_comments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="16sp"
+        android:text="no comments yet..."
+        android:gravity="center"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

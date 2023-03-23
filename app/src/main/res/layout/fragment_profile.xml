@@ -1,129 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="12dp"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15"/>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85"/>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.85"/>
+    <ImageView
+        android:id="@+id/profile_picture_blank"
+        android:layout_width="82dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/ic_blank_profile_pic_grey_background"
+        android:layout_marginTop="48dp"/>
 
-        <ImageView
-            android:id="@+id/profile_picture_blank"
-            android:layout_width="82dp"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            android:src="@drawable/ic_blank_profile_pic_grey_background"
-            android:layout_marginTop="48dp"/>
+    <TextView
+        android:id="@+id/label_username"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/profile_picture_blank"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:gravity="center"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        />
 
-        <EditText
-            android:id="@+id/input_username"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/profile_picture_blank"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            android:hint="username"
-            android:gravity="center"
-            android:inputType="text"
-            android:maxLines="1"
-            />
+    <Button
+        android:id="@+id/button_follow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        app:layout_constraintTop_toBottomOf="@id/label_username"
+        android:visibility="gone"/>
 
-        <EditText
-            android:id="@+id/input_email"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/input_username"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:hint="email address"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:gravity="center"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            />
+    <TextView
+        android:id="@+id/label_recent_posts"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toBottomOf="@id/button_follow"
+        app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
+        android:gravity="center"
+        android:inputType="text"
+        android:maxLines="1"
+        android:visibility="invisible"
+        android:textSize="16sp"
+        />
 
-        <EditText
-            android:id="@+id/input_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/input_email"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            android:hint="name"
-            android:gravity="center"
-            android:inputType="text"
-            android:maxLines="1"
-            />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/user_post_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/label_recent_posts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <EditText
-            android:id="@+id/input_password"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/input_name"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            android:hint="password"
-            android:gravity="center"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            />
-
-        <Button
-            android:id="@+id/button_log_out"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/input_password"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            android:layout_marginTop="24dp"
-            android:text="log out"/>
-
-        <Button
-            android:id="@+id/button_delete_account"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toBottomOf="@id/button_log_out"
-            app:layout_constraintStart_toEndOf="@id/guideline_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guideline_vertical_2"
-            android:layout_marginTop="24dp"
-            android:text="delete my account"/>
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/account_controls"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="input_email,input_name,input_password,button_log_out,button_delete_account"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

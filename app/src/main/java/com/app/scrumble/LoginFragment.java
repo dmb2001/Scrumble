@@ -1,6 +1,7 @@
 package com.app.scrumble;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,12 +47,14 @@ public class LoginFragment extends BaseFragment{
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Log.d("DEBUGGING", "Login clicked");
                         hideKeyBoard(view);
                         if(usernameField.getText().toString() == null || usernameField.getText().toString().trim().length() == 0){
                             Toast.makeText(getContext(), "please enter your username", Toast.LENGTH_SHORT).show();
                         }else if(passwordField.getText().toString() == null || passwordField.getText().toString().trim().length() == 0){
                             Toast.makeText(getContext(), "please enter your password", Toast.LENGTH_SHORT).show();
                         }else{
+                            Log.d("DEBUGGING", "relevant fields provided");
                             runInBackground(
                                     new Runnable() {
                                         @Override

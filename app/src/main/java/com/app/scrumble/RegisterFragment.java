@@ -1,5 +1,6 @@
 package com.app.scrumble;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,26 +8,62 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.app.scrumble.model.user.User;
 import com.app.scrumble.model.user.User.UserBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class RegisterFragment extends BaseFragment{
 
     private final long newUserID =  UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
 
+    private ImageView profilePictureImageView;
+    private ActivityResultLauncher<String> imagePickerLauncher;
+    private Uri profilePictureSelection;
+
     public static RegisterFragment newInstance() {
         Bundle args = new Bundle();
         RegisterFragment fragment = new RegisterFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        imagePickerLauncher =
+                registerForActivityResult(new ActivityResultContracts.GetContent(),
+                        new ActivityResultCallback<Uri>() {
+                            @Override
+                            public void onActivityResult(Uri uri) {
+                                if (uri != null){
+                                    profilePictureSelection = uri;
+                                    Glide
+                                            .with(getContext())
+                                            .load(profilePictureSelection)
+                                            .centerCrop()
+                                            .circleCrop()
+                                            .fallback(R.color.cardview_dark_background)
+                                            .format(DecodeFormat.PREFER_RGB_565)
+                                            .into(profilePictureImageView);
+                                }
+                            }
+                        });
     }
 
     @Nullable
@@ -41,6 +78,16 @@ public class RegisterFragment extends BaseFragment{
         EditText passwordConfirmationInput = parentLayout.findViewById(R.id.input_password);
 
         SwitchCompat agreementSwitch = parentLayout.findViewById(R.id.toggle_agreement_read);
+
+        profilePictureImageView = parentLayout.findViewById(R.id.profile_picture_blank);
+        profilePictureImageView.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        imagePickerLauncher.launch("image/*");
+                    }
+                }
+        );
 
         Button submitButton = parentLayout.findViewById(R.id.button_submit);
         submitButton.setOnClickListener(
@@ -76,6 +123,10 @@ public class RegisterFragment extends BaseFragment{
                                         public void run() {
                                             if (isSafe()) {
                                                 getUserDAO().create(newUser);
+                                                if (profilePictureSelection != null){
+                                                    String objectKey = URLStringBuilder.buildProfilePictureKey(newUser.getId());
+                                                    getImageUploader().upload(profilePictureSelection, objectKey);
+                                                }
                                                 runOnUIThread(
                                                         new Runnable() {
                                                             @Override

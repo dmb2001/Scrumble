@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
 
+import com.app.scrumble.model.ImageUploader;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
 import com.app.scrumble.model.group.GroupDAO;
 import com.app.scrumble.model.group.scrapbook.ScrapbookDAO;
@@ -48,6 +49,10 @@ public abstract class BaseFragment extends Fragment {
 
     protected final GroupDAO getGroupDAO() {
         return ((MainActivity)getActivity()).getGroupDAO();
+    }
+
+    protected final ImageUploader getImageUploader(){
+        return ((MainActivity)getActivity()).getImageUploader();
     }
 
     protected void hideKeyBoard(View view){
