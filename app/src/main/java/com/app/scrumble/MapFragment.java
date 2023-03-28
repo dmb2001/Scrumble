@@ -1,21 +1,18 @@
 package com.app.scrumble;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,9 +20,12 @@ import androidx.annotation.Nullable;
 
 import com.app.scrumble.model.group.scrapbook.Scrapbook;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.request.FutureTarget;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Objects;
 import java.util.Set;
@@ -53,6 +54,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     private static final String KEY_MARKER_ID = "KEY_MARKER_ID";
     private static final String KEY_LAST_KNOWN_LAT = "KEY_LAST_KNOWN_LAT";
     private static final String KEY_LAST_KNOWN_LONG = "KEY_LAST_KNOWN_LONG";
+
+    FusedLocationProviderClient locationProvider;
 
     ImageButton profileButton;
 
@@ -77,20 +80,29 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = (LocationManager) getActivity().getApplicationContext().getSystemService(LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+        locationProvider = LocationServices.getFusedLocationProviderClient(getContext());
+        locationProvider.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null){
+                            userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            if(map != null){
+                                centerMapOnSelf(true);
+                            }
+                        }
+                    }
+                });
+        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 1000).setWaitForAccurateLocation(false).build();
+        locationProvider.requestLocationUpdates(locationRequest, new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                Log.d("DEBUGGING", "location changed!");
-                LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                if(userLocation == null || com.app.scrumble.model.group.scrapbook.Location.distanceBetween(convert(newLocation), convert(userLocation)) > 3){
-                    userLocation = newLocation;
-                    if(map != null && followUser){
-                        centerMapOnSelf(true);
-                    }
+                userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                if(map != null && followUser){
+                    centerMapOnSelf(true);
                 }
             }
-        });
+        }, Looper.getMainLooper());
     }
 
     private com.app.scrumble.model.group.scrapbook.Location convert(LatLng latLng){
@@ -112,7 +124,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     followUser = true;
                     centerMapOnSelf(true);
                 }else if(map != null){
-                    userLocation = new LatLng(55.911118287663335, -3.3217783900766955);
+                    Log.d("DEBUGGING", "");
+                    userLocation = new LatLng(55.9, -3.3);
                     centerMapOnSelf(true);
                 }
             }
@@ -294,6 +307,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
 
     @Override
     public void onCameraIdle() {
+        Log.d("DEBUGGING", "onCameraIdle");
         final CameraPosition currentCameraPos = map.getCameraPosition();
         final long radius = new Float(getRadiusOfCurrentMapView()).longValue();
         runInBackground(
@@ -301,6 +315,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, OnC
                     @Override
                     public void run() {
                         if(isSafe() && userLocation != null){
+                            Log.d("DEBUGGING", "querying for location: " + userLocation.latitude + " " + userLocation.longitude + " within radius " + radius);
                             Set<Scrapbook> result = getScrapBookDAO().queryScrapbooksByLocation(new com.app.scrumble.model.group.scrapbook.Location(userLocation.latitude, userLocation.longitude), Math.min(radius, 10000));
                             if(result != null && result.size() > 0){
                                 runOnUIThread(
